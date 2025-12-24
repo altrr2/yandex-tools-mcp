@@ -15,10 +15,17 @@ MCP server for [Yandex Wordstat API](https://wordstat.yandex.com/) — keyword r
 
 | Tool | Description | Quota Cost |
 |------|-------------|------------|
-| `get-regions-tree` | Get all supported regions with IDs | Free |
+| `get-regions-tree` | Get top 3 levels of region hierarchy (configurable depth) | Free |
+| `get-region-children` | Drill down into a specific region to see its children | Free |
 | `top-requests` | Popular queries containing a keyword (last 30 days) | 1 unit |
 | `dynamics` | Search volume trends over time | 2 units |
-| `regions` | Regional distribution of search volume | 2 units |
+| `regions` | Regional distribution with region names and affinity insights | 2 units |
+
+**v1.2.0 Improvements:**
+- **Smart region caching** — regions tree is fetched once per session
+- **Region names included** — no more cryptic IDs, results show actual region names
+- **Drill-down support** — use `get-region-children` to explore sub-regions
+- **Affinity insights** — `regions` tool shows both top by volume and top by interest
 
 ### Setup
 
@@ -110,10 +117,17 @@ Once configured, ask Claude:
 
 | Инструмент | Описание | Расход квоты |
 |------------|----------|--------------|
-| `get-regions-tree` | Получить все поддерживаемые регионы с ID | Бесплатно |
+| `get-regions-tree` | Получить топ-3 уровня иерархии регионов (глубина настраивается) | Бесплатно |
+| `get-region-children` | Детализация региона — показать дочерние регионы | Бесплатно |
 | `top-requests` | Популярные запросы с ключевым словом (за 30 дней) | 1 единица |
 | `dynamics` | Динамика поисковых запросов во времени | 2 единицы |
-| `regions` | Региональное распределение запросов | 2 единицы |
+| `regions` | Региональное распределение с названиями и индексом аффинитивности | 2 единицы |
+
+**Улучшения v1.2.0:**
+- **Кэширование регионов** — дерево регионов загружается один раз за сессию
+- **Названия регионов** — результаты содержат названия, а не только ID
+- **Детализация** — используйте `get-region-children` для просмотра подрегионов
+- **Аналитика аффинитивности** — `regions` показывает топ по объёму и топ по интересу
 
 ### Настройка
 

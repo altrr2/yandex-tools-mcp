@@ -15,10 +15,16 @@ MCP server for [Yandex Search API](https://yandex.cloud/en/services/search-api) 
 
 - **Optimized for Russian/Cyrillic** — auto-detects language and uses appropriate search index
 - **Full Yandex Search** — same results as yandex.ru
-- **Rich results** — titles, URLs, snippets, and optional images
+- **Rich structured results** — position, URL, domain, title, headline, passages, snippet, size, language, cached URL
 - **Content filtering** — family mode support
 - **Regional search** — filter by geographic region
 - **Pagination** — fetch multiple pages of results
+
+**v1.1.0 Improvements:**
+- **Structured JSON output** — results now include all available metadata
+- **Domain extraction** — each result includes parsed domain
+- **Passages array** — separate text snippets for better processing
+- **Cached URLs** — links to Yandex cached versions when available
 
 ### Setup
 
@@ -102,10 +108,16 @@ Once configured, ask Claude:
 
 - **Оптимизирован для русского языка** — автоматически определяет язык и использует нужный индекс
 - **Полноценный поиск Яндекса** — те же результаты, что и на yandex.ru
-- **Богатые результаты** — заголовки, URL, сниппеты и опционально изображения
+- **Структурированные результаты** — позиция, URL, домен, заголовок, headline, passages, сниппет, размер, язык, кэш
 - **Фильтрация контента** — поддержка семейного режима
 - **Региональный поиск** — фильтрация по географическому региону
 - **Пагинация** — получение нескольких страниц результатов
+
+**Улучшения v1.1.0:**
+- **Структурированный JSON** — результаты содержат все доступные метаданные
+- **Извлечение домена** — каждый результат включает распарсенный домен
+- **Массив passages** — отдельные текстовые фрагменты для лучшей обработки
+- **Кэшированные URL** — ссылки на кэшированные версии Яндекса
 
 ### Настройка
 

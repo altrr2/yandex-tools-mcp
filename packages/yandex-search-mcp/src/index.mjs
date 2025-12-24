@@ -40,10 +40,21 @@ function cleanText(text) {
     .trim();
 }
 
+function extractDomain(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch {
+    const match = url.match(/^(?:https?:\/\/)?([^/?#]+)/i);
+    return match?.[1] || '';
+  }
+}
+
 function parseXMLResults(xmlData, includeImages = false) {
   const results = [];
   const groupMatches = xmlData.matchAll(/<group>([\s\S]*?)<\/group>/g);
 
+  let position = 0;
   for (const groupMatch of groupMatches) {
     const groupContent = groupMatch?.[1];
     if (!groupContent) continue;
@@ -55,32 +66,48 @@ function parseXMLResults(xmlData, includeImages = false) {
     const urlMatch = docContent.match(/<url>([^<]+)<\/url>/);
     if (!urlMatch?.[1]) continue;
 
-    const titleMatch = docContent.match(/<title>(.*?)<\/title>/);
+    position++;
+    const url = urlMatch[1];
+
+    const titleMatch = docContent.match(/<title>(.*?)<\/title>/s);
     const title = titleMatch?.[1] ? cleanText(titleMatch[1]) : 'No title';
 
+    const headlineMatch = docContent.match(/<headline>(.*?)<\/headline>/s);
+    const headline = headlineMatch?.[1] ? cleanText(headlineMatch[1]) : undefined;
+
+    const passages = [];
     const passagesMatch = docContent.match(/<passages>([\s\S]*?)<\/passages>/);
-    let content = '';
     if (passagesMatch?.[1]) {
-      const passageMatches = passagesMatch[1].matchAll(/<passage>(.*?)<\/passage>/g);
-      const passages = [];
+      const passageMatches = passagesMatch[1].matchAll(/<passage>(.*?)<\/passage>/gs);
       for (const match of passageMatches) {
         if (match[1]) {
           passages.push(cleanText(match[1]));
         }
       }
-      content = passages.join(' ');
     }
 
-    if (!content) {
-      const headlineMatch = docContent.match(/<headline>(.*?)<\/headline>/);
-      content = headlineMatch?.[1] ? cleanText(headlineMatch[1]) : '';
-    }
+    const snippet = passages.length > 0 ? passages.join(' ') : headline || '';
+
+    const sizeMatch = docContent.match(/<size>(\d+)<\/size>/);
+    const size = sizeMatch?.[1] ? parseInt(sizeMatch[1], 10) : undefined;
+
+    const langMatch = docContent.match(/<lang>([^<]+)<\/lang>/);
+    const lang = langMatch?.[1] || undefined;
+
+    const cachedUrlMatch = docContent.match(/<saved-copy-url>([^<]+)<\/saved-copy-url>/);
+    const cachedUrl = cachedUrlMatch?.[1] || undefined;
 
     const result = {
+      position,
+      url,
+      domain: extractDomain(url),
       title,
-      url: urlMatch[1],
-      content: content || 'No content available',
-      snippet: content,
+      headline,
+      passages: passages.length > 0 ? passages : undefined,
+      snippet: snippet || 'No content available',
+      size,
+      lang,
+      cachedUrl,
     };
 
     if (includeImages) {
@@ -194,7 +221,7 @@ server.registerTool(
   {
     title: 'Yandex Search',
     description:
-      'Search the web using Yandex. Optimized for Russian and Cyrillic content but works for any language. Returns titles, URLs, and snippets.',
+      'Search the web using Yandex. Optimized for Russian and Cyrillic content but works for any language. Returns structured results with position, url, domain, title, headline (meta description), passages (text snippets array), snippet (combined text), size, lang, and cachedUrl.',
     inputSchema: {
       query: z.string().describe('Search query'),
       maxResults: z.number().min(1).max(100).optional().describe('Maximum number of results (default: 10, max: 100)'),
@@ -216,15 +243,11 @@ server.registerTool(
       familyMode,
     });
 
-    const formattedResults = results
-      .map((r, i) => `${i + 1}. **${r.title}**\n   ${r.url}\n   ${r.snippet || r.content}`)
-      .join('\n\n');
-
     return {
       content: [
         {
           type: 'text',
-          text: `Found ${results.length} results for "${query}":\n\n${formattedResults}`,
+          text: JSON.stringify({ query, totalResults: results.length, results }, null, 2),
         },
       ],
     };
