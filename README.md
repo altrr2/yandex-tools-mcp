@@ -1,6 +1,6 @@
 # yandex-tools-mcp
 
-MCP servers for Yandex APIs — search and keyword research for the Russian market.
+MCP servers for Yandex APIs — search, keyword research, and webmaster tools for the Russian market.
 
 [English](#english) | [Русский](#русский)
 
@@ -14,6 +14,7 @@ MCP servers for Yandex APIs — search and keyword research for the Russian mark
 |---------|-------------|-----|
 | [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Keyword research & search trends via Yandex Wordstat API | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Web search via Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
+| [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Site analytics, indexing & SEO via Yandex Webmaster API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
 
 ### Quick Start
 
@@ -50,6 +51,22 @@ MCP servers for Yandex APIs — search and keyword research for the Russian mark
 }
 ```
 
+**Yandex Webmaster** (site analytics & SEO):
+
+```json
+{
+  "mcpServers": {
+    "yandex-webmaster": {
+      "command": "npx",
+      "args": ["-y", "yandex-webmaster-mcp"],
+      "env": {
+        "YANDEX_WEBMASTER_TOKEN": "your_oauth_token"
+      }
+    }
+  }
+}
+```
+
 See individual package READMEs for detailed setup instructions.
 
 ---
@@ -62,6 +79,7 @@ See individual package READMEs for detailed setup instructions.
 |-------|----------|-----|
 | [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Исследование ключевых слов через API Яндекс Вордстат | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Веб-поиск через Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
+| [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Аналитика сайта, индексация и SEO через Яндекс Вебмастер API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
 
 ### Быстрый старт
 
@@ -98,6 +116,22 @@ See individual package READMEs for detailed setup instructions.
 }
 ```
 
+**Яндекс Вебмастер** (аналитика сайта и SEO):
+
+```json
+{
+  "mcpServers": {
+    "yandex-webmaster": {
+      "command": "npx",
+      "args": ["-y", "yandex-webmaster-mcp"],
+      "env": {
+        "YANDEX_WEBMASTER_TOKEN": "ваш_oauth_токен"
+      }
+    }
+  }
+}
+```
+
 Подробные инструкции по настройке в README каждого пакета.
 
 ---
@@ -122,6 +156,7 @@ Publish packages:
 ```bash
 cd packages/yandex-wordstat-mcp && npm publish
 cd packages/yandex-search-mcp && npm publish
+cd packages/yandex-webmaster-mcp && npm publish
 ```
 
 ## License

@@ -4,9 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Monorepo containing two MCP (Model Context Protocol) servers for Yandex APIs:
+Monorepo containing three MCP (Model Context Protocol) servers for Yandex APIs:
 - **yandex-search-mcp**: Web search optimized for Russian/Cyrillic content
 - **yandex-wordstat-mcp**: Keyword research and search trend analysis
+- **yandex-webmaster-mcp**: Site analytics, indexing status, and SEO diagnostics
 
 ## Commands
 
@@ -22,10 +23,12 @@ bun run format        # Format code
 # Run servers locally (for testing)
 YANDEX_WORDSTAT_TOKEN=token node packages/yandex-wordstat-mcp/src/index.mjs
 YANDEX_SEARCH_API_KEY=key YANDEX_FOLDER_ID=folder node packages/yandex-search-mcp/src/index.mjs
+YANDEX_WEBMASTER_TOKEN=token node packages/yandex-webmaster-mcp/src/index.mjs
 
 # Publish packages
 cd packages/yandex-wordstat-mcp && npm publish
 cd packages/yandex-search-mcp && npm publish
+cd packages/yandex-webmaster-mcp && npm publish
 ```
 
 ## Architecture
@@ -39,15 +42,16 @@ cd packages/yandex-search-mcp && npm publish
 ### Package Structure
 ```
 packages/
-├── yandex-search-mcp/src/index.mjs    # Single-file MCP server (1 tool: search)
-└── yandex-wordstat-mcp/
-    └── src/
-        ├── index.mjs                   # MCP server (5 tools)
-        └── auth.mjs                    # OAuth token exchange flow
+├── yandex-search-mcp/src/index.mjs     # Single-file MCP server (1 tool: search)
+├── yandex-wordstat-mcp/
+│   └── src/
+│       ├── index.mjs                   # MCP server (5 tools)
+│       └── auth.mjs                    # OAuth token exchange flow
+└── yandex-webmaster-mcp/src/index.mjs  # Single-file MCP server (24 tools)
 ```
 
 ### MCP Protocol Pattern
-Both servers follow the same pattern:
+All servers follow the same pattern:
 1. Import `@modelcontextprotocol/sdk` and `zod`
 2. Register tools with input schemas (Zod)
 3. Use `StdioServerTransport` for communication
@@ -67,8 +71,15 @@ Both servers follow the same pattern:
 - Tools have quota costs (0-2 units per call)
 - Hierarchical region support with flat lookup maps
 
+**yandex-webmaster-mcp:**
+- Uses Yandex Webmaster API v4 (JSON responses)
+- Caches user_id for the session (required for all API calls)
+- Read-only tools: site stats, search queries, indexing, backlinks, sitemaps, diagnostics
+- Requires verified site ownership in Yandex Webmaster
+
 ### Environment Variables
 See `.env.example`:
 - `YANDEX_SEARCH_API_KEY` / `YANDEX_FOLDER_ID` for search
 - `YANDEX_WORDSTAT_TOKEN` for wordstat
+- `YANDEX_WEBMASTER_TOKEN` for webmaster
 - `YANDEX_CLIENT_ID` / `YANDEX_CLIENT_SECRET` for OAuth flow (optional)
