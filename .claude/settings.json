@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read f; case \"$f\" in (*.[jt]s|*.jsx|*.tsx|*.json|*.md) bunx --bun biome check --write --log-level error \"$f\" ;; esac; }"
+          }
+        ]
+      }
+    ]
+  }
+}
