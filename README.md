@@ -69,6 +69,8 @@ MCP servers for Yandex APIs — search, keyword research, and webmaster tools fo
 
 See individual package READMEs for detailed setup instructions.
 
+Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Analysis on redirekto.ru</a>
+
 ---
 
 ## Русский
@@ -133,6 +135,8 @@ See individual package READMEs for detailed setup instructions.
 ```
 
 Подробные инструкции по настройке в README каждого пакета.
+
+Онлайн пример: <a href="https://redirekto.ru/seo" target="_blank">AI SEO-Анализ на редиректо.ru</a>
 
 ---
 

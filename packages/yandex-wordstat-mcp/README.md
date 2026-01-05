@@ -109,6 +109,8 @@ Once configured, ask Claude:
 - "Get the Yandex Wordstat regions tree"
 - "What is the region ID for Moscow?"
 
+Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Analysis on redirekto.ru</a>
+
 ---
 
 ## Русский
@@ -210,6 +212,8 @@ claude mcp add yandex-wordstat -e YANDEX_WORDSTAT_TOKEN=ваш_токен -- npx
 **Получение ID регионов:**
 - "Получи дерево регионов Яндекс Вордстат"
 - "Какой ID региона у Москвы?"
+
+Онлайн пример: <a href="https://redirekto.ru/seo" target="_blank">AI SEO-Анализ на редиректо.ru</a>
 
 ---
 

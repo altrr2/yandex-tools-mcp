@@ -1,6 +1,6 @@
 {
   "name": "yandex-search-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MCP server for Yandex Search API - web search optimized for Russian and Cyrillic content",
   "type": "module",
   "main": "src/index.mjs",

@@ -100,6 +100,8 @@ Once configured, ask Claude:
 | `page` | number | 0 | Page number for pagination |
 | `familyMode` | string | MODERATE | Content filter: NONE, MODERATE, STRICT |
 
+Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Analysis on redirekto.ru</a>
+
 ---
 
 ## Русский
@@ -192,6 +194,8 @@ claude mcp add yandex-search \
 | `region` | number | авто | ID региона (например, 213 для Москвы) |
 | `page` | number | 0 | Номер страницы для пагинации |
 | `familyMode` | string | MODERATE | Фильтр контента: NONE, MODERATE, STRICT |
+
+Онлайн пример: <a href="https://redirekto.ru/seo" target="_blank">AI SEO-Анализ на редиректо.ru</a>
 
 ---
 
