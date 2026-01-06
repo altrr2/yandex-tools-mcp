@@ -11,6 +11,10 @@
     "yandex-webmaster": {
       "command": "node",
       "args": ["--env-file=.env", "packages/yandex-webmaster-mcp/src/index.mjs"]
+    },
+    "yandex-metrica": {
+      "command": "node",
+      "args": ["--env-file=.env", "packages/yandex-metrica-mcp/src/index.mjs"]
     }
   }
 }

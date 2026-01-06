@@ -1,6 +1,6 @@
 # yandex-tools-mcp
 
-MCP servers for Yandex APIs — search, keyword research, and webmaster tools for the Russian market.
+MCP servers for Yandex APIs — search, keyword research, webmaster tools, and web analytics for the Russian market.
 
 [English](#english) | [Русский](#русский)
 
@@ -15,6 +15,7 @@ MCP servers for Yandex APIs — search, keyword research, and webmaster tools fo
 | [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Keyword research & search trends via Yandex Wordstat API | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Web search via Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Site analytics, indexing & SEO via Yandex Webmaster API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
+| [yandex-metrica-mcp](./packages/yandex-metrica-mcp) | Web analytics & traffic data via Yandex Metrica API | [![npm](https://img.shields.io/npm/v/yandex-metrica-mcp)](https://www.npmjs.com/package/yandex-metrica-mcp) |
 
 ### Quick Start
 
@@ -67,13 +68,29 @@ MCP servers for Yandex APIs — search, keyword research, and webmaster tools fo
 }
 ```
 
+**Yandex Metrica** (web analytics):
+
+```json
+{
+  "mcpServers": {
+    "yandex-metrica": {
+      "command": "npx",
+      "args": ["-y", "yandex-metrica-mcp"],
+      "env": {
+        "YANDEX_METRICA_TOKEN": "your_oauth_token"
+      }
+    }
+  }
+}
+```
+
 See individual package READMEs for detailed setup instructions.
 
 Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Analysis on redirekto.ru</a>
 
 ### Claude Code Plugin
 
-Install all three MCPs as a single plugin with built-in skills for keyword research and competitive analysis:
+Install all four MCPs as a single plugin with built-in skills for keyword research and competitive analysis:
 
 ```bash
 # Set your API keys
@@ -81,6 +98,7 @@ export YANDEX_SEARCH_API_KEY=your_api_key
 export YANDEX_FOLDER_ID=your_folder_id
 export YANDEX_WORDSTAT_TOKEN=your_oauth_token
 export YANDEX_WEBMASTER_TOKEN=your_oauth_token
+export YANDEX_METRICA_TOKEN=your_oauth_token
 
 # Run with plugin
 claude --plugin-dir /path/to/yandex-tools-mcp
@@ -101,6 +119,7 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 | [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Исследование ключевых слов через API Яндекс Вордстат | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Веб-поиск через Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Аналитика сайта, индексация и SEO через Яндекс Вебмастер API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
+| [yandex-metrica-mcp](./packages/yandex-metrica-mcp) | Веб-аналитика и данные о трафике через Яндекс Метрика API | [![npm](https://img.shields.io/npm/v/yandex-metrica-mcp)](https://www.npmjs.com/package/yandex-metrica-mcp) |
 
 ### Быстрый старт
 
@@ -153,13 +172,29 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 }
 ```
 
+**Яндекс Метрика** (веб-аналитика):
+
+```json
+{
+  "mcpServers": {
+    "yandex-metrica": {
+      "command": "npx",
+      "args": ["-y", "yandex-metrica-mcp"],
+      "env": {
+        "YANDEX_METRICA_TOKEN": "ваш_oauth_токен"
+      }
+    }
+  }
+}
+```
+
 Подробные инструкции по настройке в README каждого пакета.
 
 Онлайн пример: <a href="https://redirekto.ru/seo" target="_blank">AI SEO-Анализ на редиректо.ru</a>
 
 ### Плагин для Claude Code
 
-Установите все три MCP как единый плагин со встроенными навыками для исследования ключевых слов и анализа конкурентов:
+Установите все четыре MCP как единый плагин со встроенными навыками для исследования ключевых слов и анализа конкурентов:
 
 ```bash
 # Установите API ключи
@@ -167,6 +202,7 @@ export YANDEX_SEARCH_API_KEY=ваш_api_ключ
 export YANDEX_FOLDER_ID=ваш_folder_id
 export YANDEX_WORDSTAT_TOKEN=ваш_oauth_токен
 export YANDEX_WEBMASTER_TOKEN=ваш_oauth_токен
+export YANDEX_METRICA_TOKEN=ваш_oauth_токен
 
 # Запустите с плагином
 claude --plugin-dir /path/to/yandex-tools-mcp

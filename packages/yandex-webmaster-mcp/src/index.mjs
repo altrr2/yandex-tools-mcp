@@ -70,7 +70,7 @@ async function runServer() {
     return new Date(date).toISOString();
   }
 
-  const server = new McpServer({name:'yandex-webmaster',version:'1.0.0'});
+  const server = new McpServer({ name: 'yandex-webmaster', version: '1.0.0' });
 
   // ============ Core Tools ============
 

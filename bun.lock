@@ -8,6 +8,17 @@
         "@biomejs/biome": "^2.3.11",
       },
     },
+    "packages/yandex-metrica-mcp": {
+      "name": "yandex-metrica-mcp",
+      "version": "1.0.0",
+      "bin": {
+        "yandex-metrica-mcp": "src/index.mjs",
+      },
+      "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.25.1",
+        "zod": "^4.3.5",
+      },
+    },
     "packages/yandex-search-mcp": {
       "name": "yandex-search-mcp",
       "version": "1.2.2",
@@ -236,6 +247,8 @@
     "which": ["which@2.0.2", "", { "dependencies": { "isexe": "^2.0.0" }, "bin": { "node-which": "./bin/node-which" } }, "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA=="],
 
     "wrappy": ["wrappy@1.0.2", "", {}, "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="],
+
+    "yandex-metrica-mcp": ["yandex-metrica-mcp@workspace:packages/yandex-metrica-mcp"],
 
     "yandex-search-mcp": ["yandex-search-mcp@workspace:packages/yandex-search-mcp"],
 

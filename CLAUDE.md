@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Monorepo containing three MCP (Model Context Protocol) servers for Yandex APIs:
+Monorepo containing four MCP (Model Context Protocol) servers for Yandex APIs:
 - **yandex-search-mcp**: Web search optimized for Russian/Cyrillic content
 - **yandex-wordstat-mcp**: Keyword research and search trend analysis
 - **yandex-webmaster-mcp**: Site analytics, indexing status, and SEO diagnostics
+- **yandex-metrica-mcp**: Web analytics, traffic data, and visitor insights
 
 ## Commands
 
@@ -24,11 +25,13 @@ bun run format        # Format code
 YANDEX_WORDSTAT_TOKEN=token node packages/yandex-wordstat-mcp/src/index.mjs
 YANDEX_SEARCH_API_KEY=key YANDEX_FOLDER_ID=folder node packages/yandex-search-mcp/src/index.mjs
 YANDEX_WEBMASTER_TOKEN=token node packages/yandex-webmaster-mcp/src/index.mjs
+YANDEX_METRICA_TOKEN=token node packages/yandex-metrica-mcp/src/index.mjs
 
 # Publish packages
 cd packages/yandex-wordstat-mcp && npm publish
 cd packages/yandex-search-mcp && npm publish
 cd packages/yandex-webmaster-mcp && npm publish
+cd packages/yandex-metrica-mcp && npm publish
 ```
 
 ## Architecture
@@ -47,7 +50,14 @@ packages/
 │   └── src/
 │       ├── index.mjs                   # MCP server (5 tools)
 │       └── auth.mjs                    # OAuth token exchange flow
-└── yandex-webmaster-mcp/src/index.mjs  # Single-file MCP server (24 tools)
+├── yandex-webmaster-mcp/
+│   └── src/
+│       ├── index.mjs                   # MCP server (24 tools)
+│       └── auth.mjs                    # OAuth token exchange flow
+└── yandex-metrica-mcp/
+    └── src/
+        ├── index.mjs                   # MCP server (10 tools)
+        └── auth.mjs                    # OAuth token exchange flow
 ```
 
 ### MCP Protocol Pattern
@@ -77,11 +87,18 @@ All servers follow the same pattern:
 - Read-only tools: site stats, search queries, indexing, backlinks, sitemaps, diagnostics
 - Requires verified site ownership in Yandex Webmaster
 
+**yandex-metrica-mcp:**
+- Uses Yandex Metrica API (JSON responses)
+- Management API for counters/goals, Reporting API for statistics
+- Default date range: last 30 days
+- Flexible custom reports with any dimensions/metrics
+
 ### Environment Variables
 See `.env.example`:
 - `YANDEX_SEARCH_API_KEY` / `YANDEX_FOLDER_ID` for search
 - `YANDEX_WORDSTAT_TOKEN` for wordstat
 - `YANDEX_WEBMASTER_TOKEN` for webmaster
+- `YANDEX_METRICA_TOKEN` for metrica
 - `YANDEX_CLIENT_ID` / `YANDEX_CLIENT_SECRET` for OAuth flow (optional)
 
 ## Skills

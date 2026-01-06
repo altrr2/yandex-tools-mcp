@@ -1,0 +1,50 @@
+{
+  "name": "yandex-metrica-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Yandex Metrica API - web analytics, traffic data, and visitor insights",
+  "type": "module",
+  "main": "src/index.mjs",
+  "bin": {
+    "yandex-metrica-mcp": "src/index.mjs"
+  },
+  "files": [
+    "src/*.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node src/index.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "yandex",
+    "metrica",
+    "metrika",
+    "analytics",
+    "web-analytics",
+    "traffic",
+    "visitors",
+    "russian",
+    "claude",
+    "ai"
+  ],
+  "author": "Alternex",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altrr2/yandex-tools-mcp.git",
+    "directory": "packages/yandex-metrica-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/altrr2/yandex-tools-mcp/issues"
+  },
+  "homepage": "https://github.com/altrr2/yandex-tools-mcp/tree/main/packages/yandex-metrica-mcp#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "zod": "^4.3.5"
+  }
+}
