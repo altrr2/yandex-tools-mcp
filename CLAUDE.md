@@ -83,3 +83,42 @@ See `.env.example`:
 - `YANDEX_WORDSTAT_TOKEN` for wordstat
 - `YANDEX_WEBMASTER_TOKEN` for webmaster
 - `YANDEX_CLIENT_ID` / `YANDEX_CLIENT_SECRET` for OAuth flow (optional)
+
+## Skills
+
+Located in `.claude/skills/`, these are automatically invoked by Claude based on task context:
+
+| Skill | Triggers on |
+|-------|-------------|
+| `yandex-keyword-research` | Keyword research, search volumes, trends, "what are people searching for" |
+| `yandex-competitive-analysis` | Competitor analysis, SERP research, "who ranks for", content gaps |
+
+Skills combine multiple MCP tools into guided workflows with output formatting guidelines.
+
+## Plugin Structure
+
+This repo can be used as a Claude Code plugin. Two MCP configs exist:
+
+| File | Purpose | Secrets |
+|------|---------|---------|
+| `.mcp.json` | Local development | `--env-file=.env` |
+| `plugin.mcp.json` | Plugin distribution | `${VAR}` interpolation |
+
+**Plugin files:**
+```
+.claude-plugin/plugin.json    # Plugin manifest
+plugin.mcp.json               # MCP config for distribution (uses npx + ${VAR})
+.claude/skills/               # Skills (referenced by plugin)
+```
+
+**Testing as plugin:**
+```bash
+# Set env vars, then:
+claude --plugin-dir .
+```
+
+**Local dev (unchanged):**
+```bash
+# Uses .mcp.json with --env-file=.env
+claude
+```

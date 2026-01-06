@@ -71,6 +71,25 @@ See individual package READMEs for detailed setup instructions.
 
 Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Analysis on redirekto.ru</a>
 
+### Claude Code Plugin
+
+Install all three MCPs as a single plugin with built-in skills for keyword research and competitive analysis:
+
+```bash
+# Set your API keys
+export YANDEX_SEARCH_API_KEY=your_api_key
+export YANDEX_FOLDER_ID=your_folder_id
+export YANDEX_WORDSTAT_TOKEN=your_oauth_token
+export YANDEX_WEBMASTER_TOKEN=your_oauth_token
+
+# Run with plugin
+claude --plugin-dir /path/to/yandex-tools-mcp
+```
+
+**Included Skills:**
+- `yandex-keyword-research` — Automatically triggered for keyword research, search volumes, and trend analysis
+- `yandex-competitive-analysis` — Automatically triggered for competitor analysis and SERP research
+
 ---
 
 ## Русский
@@ -137,6 +156,25 @@ Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Ana
 Подробные инструкции по настройке в README каждого пакета.
 
 Онлайн пример: <a href="https://redirekto.ru/seo" target="_blank">AI SEO-Анализ на редиректо.ru</a>
+
+### Плагин для Claude Code
+
+Установите все три MCP как единый плагин со встроенными навыками для исследования ключевых слов и анализа конкурентов:
+
+```bash
+# Установите API ключи
+export YANDEX_SEARCH_API_KEY=ваш_api_ключ
+export YANDEX_FOLDER_ID=ваш_folder_id
+export YANDEX_WORDSTAT_TOKEN=ваш_oauth_токен
+export YANDEX_WEBMASTER_TOKEN=ваш_oauth_токен
+
+# Запустите с плагином
+claude --plugin-dir /path/to/yandex-tools-mcp
+```
+
+**Включённые навыки:**
+- `yandex-keyword-research` — Автоматически активируется для исследования ключевых слов, объёмов поиска и анализа трендов
+- `yandex-competitive-analysis` — Автоматически активируется для анализа конкурентов и исследования SERP
 
 ---
 

@@ -1,0 +1,13 @@
+{
+  "name": "yandex-tools",
+  "version": "1.0.0",
+  "description": "Yandex SEO tools for Russian/CIS markets: search, keyword research (Wordstat), and webmaster analytics",
+  "author": {
+    "name": "altrr2"
+  },
+  "repository": "https://github.com/altrr2/yandex-tools-mcp",
+  "license": "MIT",
+  "keywords": ["yandex", "seo", "search", "wordstat", "webmaster", "russia", "cis"],
+  "mcpServers": "../plugin.mcp.json",
+  "skills": "../.claude/skills/"
+}
