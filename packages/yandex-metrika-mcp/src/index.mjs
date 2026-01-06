@@ -18,10 +18,10 @@ async function runServer() {
   const STAT_URL = 'https://api-metrica.yandex.net/stat/v1';
 
   function getToken() {
-    const token = process.env.YANDEX_METRICA_TOKEN;
+    const token = process.env.YANDEX_METRIKA_TOKEN;
     if (!token) {
       throw new Error(
-        'YANDEX_METRICA_TOKEN environment variable is required. Run "npx yandex-metrica-mcp auth" to get a token.',
+        'YANDEX_METRIKA_TOKEN environment variable is required. Run "npx yandex-metrika-mcp auth" to get a token.',
       );
     }
     return token;
@@ -65,7 +65,7 @@ async function runServer() {
     };
   }
 
-  const server = new McpServer({ name: 'yandex-metrica', version: '1.0.0' });
+  const server = new McpServer({ name: 'yandex-metrika', version: '1.0.0' });
 
   // ============ Management Tools ============
 
@@ -471,5 +471,5 @@ async function runServer() {
   // Start server
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('Yandex Metrica MCP server running on stdio');
+  console.error('Yandex Metrika MCP server running on stdio');
 }

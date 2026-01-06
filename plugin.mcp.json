@@ -22,11 +22,11 @@
         "YANDEX_WEBMASTER_TOKEN": "${YANDEX_WEBMASTER_TOKEN}"
       }
     },
-    "yandex-metrica": {
+    "yandex-metrika": {
       "command": "npx",
-      "args": ["-y", "yandex-metrica-mcp"],
+      "args": ["-y", "yandex-metrika-mcp"],
       "env": {
-        "YANDEX_METRICA_TOKEN": "${YANDEX_METRICA_TOKEN}"
+        "YANDEX_METRIKA_TOKEN": "${YANDEX_METRIKA_TOKEN}"
       }
     }
   }

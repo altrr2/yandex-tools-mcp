@@ -57,14 +57,14 @@ export async function runAuth() {
     console.error('  export YANDEX_CLIENT_ID=your_client_id');
     console.error('  export YANDEX_CLIENT_SECRET=your_client_secret');
     console.error('');
-    console.error('Get these from https://oauth.yandex.ru/client/new by creating an app with Metrica API access.');
+    console.error('Get these from https://oauth.yandex.ru/client/new by creating an app with Metrika API access.');
     console.error('Required scopes: metrika:read');
     console.error('');
-    console.error('Then run: npx yandex-metrica-mcp auth');
+    console.error('Then run: npx yandex-metrika-mcp auth');
     process.exit(1);
   }
 
-  console.log('Starting OAuth flow for Yandex Metrica...\n');
+  console.log('Starting OAuth flow for Yandex Metrika...\n');
 
   const authUrl = `${OAUTH_URL}?response_type=code&client_id=${clientId}`;
 
@@ -96,11 +96,11 @@ export async function runAuth() {
     console.log(`
 {
   "mcpServers": {
-    "yandex-metrica": {
+    "yandex-metrika": {
       "command": "npx",
-      "args": ["-y", "yandex-metrica-mcp"],
+      "args": ["-y", "yandex-metrika-mcp"],
       "env": {
-        "YANDEX_METRICA_TOKEN": "${token}"
+        "YANDEX_METRIKA_TOKEN": "${token}"
       }
     }
   }

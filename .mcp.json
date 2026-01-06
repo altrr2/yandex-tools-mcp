@@ -12,9 +12,9 @@
       "command": "node",
       "args": ["--env-file=.env", "packages/yandex-webmaster-mcp/src/index.mjs"]
     },
-    "yandex-metrica": {
+    "yandex-metrika": {
       "command": "node",
-      "args": ["--env-file=.env", "packages/yandex-metrica-mcp/src/index.mjs"]
+      "args": ["--env-file=.env", "packages/yandex-metrika-mcp/src/index.mjs"]
     }
   }
 }

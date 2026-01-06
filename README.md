@@ -15,7 +15,7 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 | [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Keyword research & search trends via Yandex Wordstat API | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Web search via Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Site analytics, indexing & SEO via Yandex Webmaster API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
-| [yandex-metrica-mcp](./packages/yandex-metrica-mcp) | Web analytics & traffic data via Yandex Metrica API | [![npm](https://img.shields.io/npm/v/yandex-metrica-mcp)](https://www.npmjs.com/package/yandex-metrica-mcp) |
+| [yandex-metrika-mcp](./packages/yandex-metrika-mcp) | Web analytics & traffic data via Yandex Metrika API | [![npm](https://img.shields.io/npm/v/yandex-metrika-mcp)](https://www.npmjs.com/package/yandex-metrika-mcp) |
 
 ### Quick Start
 
@@ -73,11 +73,11 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 ```json
 {
   "mcpServers": {
-    "yandex-metrica": {
+    "yandex-metrika": {
       "command": "npx",
-      "args": ["-y", "yandex-metrica-mcp"],
+      "args": ["-y", "yandex-metrika-mcp"],
       "env": {
-        "YANDEX_METRICA_TOKEN": "your_oauth_token"
+        "YANDEX_METRIKA_TOKEN": "your_oauth_token"
       }
     }
   }
@@ -98,7 +98,7 @@ export YANDEX_SEARCH_API_KEY=your_api_key
 export YANDEX_FOLDER_ID=your_folder_id
 export YANDEX_WORDSTAT_TOKEN=your_oauth_token
 export YANDEX_WEBMASTER_TOKEN=your_oauth_token
-export YANDEX_METRICA_TOKEN=your_oauth_token
+export YANDEX_METRIKA_TOKEN=your_oauth_token
 
 # Run with plugin
 claude --plugin-dir /path/to/yandex-tools-mcp
@@ -119,7 +119,7 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 | [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Исследование ключевых слов через API Яндекс Вордстат | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Веб-поиск через Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Аналитика сайта, индексация и SEO через Яндекс Вебмастер API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
-| [yandex-metrica-mcp](./packages/yandex-metrica-mcp) | Веб-аналитика и данные о трафике через Яндекс Метрика API | [![npm](https://img.shields.io/npm/v/yandex-metrica-mcp)](https://www.npmjs.com/package/yandex-metrica-mcp) |
+| [yandex-metrika-mcp](./packages/yandex-metrika-mcp) | Веб-аналитика и данные о трафике через Яндекс Метрика API | [![npm](https://img.shields.io/npm/v/yandex-metrika-mcp)](https://www.npmjs.com/package/yandex-metrika-mcp) |
 
 ### Быстрый старт
 
@@ -177,11 +177,11 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 ```json
 {
   "mcpServers": {
-    "yandex-metrica": {
+    "yandex-metrika": {
       "command": "npx",
-      "args": ["-y", "yandex-metrica-mcp"],
+      "args": ["-y", "yandex-metrika-mcp"],
       "env": {
-        "YANDEX_METRICA_TOKEN": "ваш_oauth_токен"
+        "YANDEX_METRIKA_TOKEN": "ваш_oauth_токен"
       }
     }
   }
@@ -202,7 +202,7 @@ export YANDEX_SEARCH_API_KEY=ваш_api_ключ
 export YANDEX_FOLDER_ID=ваш_folder_id
 export YANDEX_WORDSTAT_TOKEN=ваш_oauth_токен
 export YANDEX_WEBMASTER_TOKEN=ваш_oauth_токен
-export YANDEX_METRICA_TOKEN=ваш_oauth_токен
+export YANDEX_METRIKA_TOKEN=ваш_oauth_токен
 
 # Запустите с плагином
 claude --plugin-dir /path/to/yandex-tools-mcp

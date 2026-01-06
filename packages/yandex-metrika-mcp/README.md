@@ -1,8 +1,8 @@
-# yandex-metrica-mcp
+# yandex-metrika-mcp
 
-MCP server for [Yandex Metrica API](https://yandex.com/dev/metrika/) — web analytics, traffic data, and visitor insights.
+MCP server for [Yandex Metrika API](https://yandex.com/dev/metrika/) — web analytics, traffic data, and visitor insights.
 
-[![npm version](https://badge.fury.io/js/yandex-metrica-mcp.svg)](https://www.npmjs.com/package/yandex-metrica-mcp)
+[![npm version](https://badge.fury.io/js/yandex-metrika-mcp.svg)](https://www.npmjs.com/package/yandex-metrika-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [English](#english) | [Русский](#русский)
@@ -29,7 +29,7 @@ MCP server for [Yandex Metrica API](https://yandex.com/dev/metrika/) — web ana
 **Option A: Quick (manual token)**
 
 1. Go to [Yandex OAuth](https://oauth.yandex.ru/)
-2. Create an app with **Metrica API** access (scope: `metrika:read`)
+2. Create an app with **Metrika API** access (scope: `metrika:read`)
 3. Get a debug token from the app settings
 
 **Option B: OAuth flow (recommended)**
@@ -42,7 +42,7 @@ MCP server for [Yandex Metrica API](https://yandex.com/dev/metrika/) — web ana
 ```bash
 export YANDEX_CLIENT_ID=your_client_id
 export YANDEX_CLIENT_SECRET=your_client_secret
-npx yandex-metrica-mcp auth
+npx yandex-metrika-mcp auth
 ```
 
 #### Step 2: Configure Claude
@@ -52,11 +52,11 @@ npx yandex-metrica-mcp auth
 ```json
 {
   "mcpServers": {
-    "yandex-metrica": {
+    "yandex-metrika": {
       "command": "npx",
-      "args": ["-y", "yandex-metrica-mcp"],
+      "args": ["-y", "yandex-metrika-mcp"],
       "env": {
-        "YANDEX_METRICA_TOKEN": "your_oauth_token"
+        "YANDEX_METRIKA_TOKEN": "your_oauth_token"
       }
     }
   }
@@ -66,9 +66,9 @@ npx yandex-metrica-mcp auth
 **Claude Code:**
 
 ```bash
-claude mcp add yandex-metrica \
-  -e YANDEX_METRICA_TOKEN=your_oauth_token \
-  -- npx -y yandex-metrica-mcp
+claude mcp add yandex-metrika \
+  -e YANDEX_METRIKA_TOKEN=your_oauth_token \
+  -- npx -y yandex-metrika-mcp
 ```
 
 ### Tools
@@ -132,7 +132,7 @@ Once configured, ask Claude:
 ```bash
 export YANDEX_CLIENT_ID=ваш_client_id
 export YANDEX_CLIENT_SECRET=ваш_client_secret
-npx yandex-metrica-mcp auth
+npx yandex-metrika-mcp auth
 ```
 
 #### Шаг 2: Настройте Claude
@@ -142,11 +142,11 @@ npx yandex-metrica-mcp auth
 ```json
 {
   "mcpServers": {
-    "yandex-metrica": {
+    "yandex-metrika": {
       "command": "npx",
-      "args": ["-y", "yandex-metrica-mcp"],
+      "args": ["-y", "yandex-metrika-mcp"],
       "env": {
-        "YANDEX_METRICA_TOKEN": "ваш_oauth_токен"
+        "YANDEX_METRIKA_TOKEN": "ваш_oauth_токен"
       }
     }
   }
@@ -156,9 +156,9 @@ npx yandex-metrica-mcp auth
 **Claude Code:**
 
 ```bash
-claude mcp add yandex-metrica \
-  -e YANDEX_METRICA_TOKEN=ваш_oauth_токен \
-  -- npx -y yandex-metrica-mcp
+claude mcp add yandex-metrika \
+  -e YANDEX_METRIKA_TOKEN=ваш_oauth_токен \
+  -- npx -y yandex-metrika-mcp
 ```
 
 ### Инструменты
