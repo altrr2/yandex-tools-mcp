@@ -12,14 +12,14 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 
 | Package | Description | npm |
 |---------|-------------|-----|
-| [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Keyword research & search trends via Yandex Wordstat API | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
+| [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Keyword research & search trends via the Yandex Wordstat **v2** API (Yandex Cloud) | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Web search via Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Site analytics, indexing & SEO via Yandex Webmaster API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
 | [yandex-metrika-mcp](./packages/yandex-metrika-mcp) | Web analytics & traffic data via Yandex Metrika API | [![npm](https://img.shields.io/npm/v/yandex-metrika-mcp)](https://www.npmjs.com/package/yandex-metrika-mcp) |
 
 ### Quick Start
 
-**Yandex Wordstat** (keyword research):
+**Yandex Wordstat v2** (keyword research) — Yandex Cloud Search API; uses the same key as Search:
 
 ```json
 {
@@ -28,12 +28,15 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
       "command": "npx",
       "args": ["-y", "yandex-wordstat-mcp"],
       "env": {
-        "YANDEX_WORDSTAT_TOKEN": "your_oauth_token"
+        "YANDEX_SEARCH_API_KEY": "your_api_key",
+        "YANDEX_FOLDER_ID": "your_folder_id"
       }
     }
   }
 }
 ```
+
+> Prefer a hosted tool? Use the managed endpoint at <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a> — no Yandex Cloud credentials to manage.
 
 **Yandex Search** (web search):
 
@@ -86,7 +89,7 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 
 See individual package READMEs for detailed setup instructions.
 
-Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Analysis on redirekto.ru</a>
+Online usage example: <a href="https://seyka.ru" target="_blank">seyka.ru</a>
 
 ### Claude Code Plugin
 
@@ -94,9 +97,8 @@ Install all four MCPs as a single plugin with built-in skills for keyword resear
 
 ```bash
 # Set your API keys
-export YANDEX_SEARCH_API_KEY=your_api_key
-export YANDEX_FOLDER_ID=your_folder_id
-export YANDEX_WORDSTAT_TOKEN=your_oauth_token
+export YANDEX_SEARCH_API_KEY=your_api_key   # also used by Wordstat
+export YANDEX_FOLDER_ID=your_folder_id      # also used by Wordstat
 export YANDEX_WEBMASTER_TOKEN=your_oauth_token
 export YANDEX_METRIKA_TOKEN=your_oauth_token
 
@@ -116,14 +118,14 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 
 | Пакет | Описание | npm |
 |-------|----------|-----|
-| [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Исследование ключевых слов через API Яндекс Вордстат | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
+| [yandex-wordstat-mcp](./packages/yandex-wordstat-mcp) | Исследование ключевых слов через API Яндекс Вордстат **v2** (Yandex Cloud) | [![npm](https://img.shields.io/npm/v/yandex-wordstat-mcp)](https://www.npmjs.com/package/yandex-wordstat-mcp) |
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Веб-поиск через Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Аналитика сайта, индексация и SEO через Яндекс Вебмастер API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
 | [yandex-metrika-mcp](./packages/yandex-metrika-mcp) | Веб-аналитика и данные о трафике через Яндекс Метрика API | [![npm](https://img.shields.io/npm/v/yandex-metrika-mcp)](https://www.npmjs.com/package/yandex-metrika-mcp) |
 
 ### Быстрый старт
 
-**Яндекс Вордстат** (исследование ключевых слов):
+**Яндекс Вордстат v2** (исследование ключевых слов) — Yandex Cloud Search API; использует тот же ключ, что и Поиск:
 
 ```json
 {
@@ -132,12 +134,15 @@ claude --plugin-dir /path/to/yandex-tools-mcp
       "command": "npx",
       "args": ["-y", "yandex-wordstat-mcp"],
       "env": {
-        "YANDEX_WORDSTAT_TOKEN": "ваш_oauth_токен"
+        "YANDEX_SEARCH_API_KEY": "ваш_api_ключ",
+        "YANDEX_FOLDER_ID": "ваш_folder_id"
       }
     }
   }
 }
 ```
+
+> Нужен готовый инструмент? Используйте размещённый эндпоинт <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a> — без необходимости управлять учётными данными Yandex Cloud.
 
 **Яндекс Поиск** (веб-поиск):
 
@@ -190,7 +195,7 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 
 Подробные инструкции по настройке в README каждого пакета.
 
-Онлайн пример: <a href="https://redirekto.ru/seo" target="_blank">AI SEO-Анализ на редиректо.ru</a>
+Онлайн пример использования: <a href="https://seyka.ru" target="_blank">seyka.ru</a>
 
 ### Плагин для Claude Code
 
@@ -198,9 +203,8 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 
 ```bash
 # Установите API ключи
-export YANDEX_SEARCH_API_KEY=ваш_api_ключ
-export YANDEX_FOLDER_ID=ваш_folder_id
-export YANDEX_WORDSTAT_TOKEN=ваш_oauth_токен
+export YANDEX_SEARCH_API_KEY=ваш_api_ключ   # также используется Вордстатом
+export YANDEX_FOLDER_ID=ваш_folder_id       # также используется Вордстатом
 export YANDEX_WEBMASTER_TOKEN=ваш_oauth_токен
 export YANDEX_METRIKA_TOKEN=ваш_oauth_токен
 
