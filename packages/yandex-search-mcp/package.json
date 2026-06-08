@@ -1,6 +1,6 @@
 {
   "name": "yandex-search-mcp",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "MCP server for Yandex Search API - web search optimized for Russian and Cyrillic content",
   "type": "module",
   "main": "src/index.mjs",
@@ -41,7 +41,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.1",
-    "zod": "^4.3.5"
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.4.3"
   }
 }

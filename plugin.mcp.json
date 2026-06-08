@@ -12,7 +12,10 @@
       "command": "npx",
       "args": ["-y", "yandex-wordstat-mcp"],
       "env": {
-        "YANDEX_WORDSTAT_TOKEN": "${YANDEX_WORDSTAT_TOKEN}"
+        "YANDEX_SEARCH_API_KEY": "${YANDEX_SEARCH_API_KEY}",
+        "YANDEX_FOLDER_ID": "${YANDEX_FOLDER_ID}",
+        "YANDEX_WORDSTAT_API_KEY": "${YANDEX_WORDSTAT_API_KEY}",
+        "YANDEX_WORDSTAT_FOLDER_ID": "${YANDEX_WORDSTAT_FOLDER_ID}"
       }
     },
     "yandex-webmaster": {

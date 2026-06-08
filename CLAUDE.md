@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Monorepo containing four MCP (Model Context Protocol) servers for Yandex APIs:
 - **yandex-search-mcp**: Web search optimized for Russian/Cyrillic content
-- **yandex-wordstat-mcp**: Keyword research and search trend analysis
+- **yandex-wordstat-mcp**: Keyword research and search trend analysis (**Wordstat v2** via the Yandex Cloud Search API)
 - **yandex-webmaster-mcp**: Site analytics, indexing status, and SEO diagnostics
 - **yandex-metrika-mcp**: Web analytics, traffic data, and visitor insights
 
@@ -22,7 +22,7 @@ bun run lint:fix      # Fix linting issues
 bun run format        # Format code
 
 # Run servers locally (for testing)
-YANDEX_WORDSTAT_TOKEN=token node packages/yandex-wordstat-mcp/src/index.mjs
+YANDEX_SEARCH_API_KEY=key YANDEX_FOLDER_ID=folder node packages/yandex-wordstat-mcp/src/index.mjs
 YANDEX_SEARCH_API_KEY=key YANDEX_FOLDER_ID=folder node packages/yandex-search-mcp/src/index.mjs
 YANDEX_WEBMASTER_TOKEN=token node packages/yandex-webmaster-mcp/src/index.mjs
 YANDEX_METRIKA_TOKEN=token node packages/yandex-metrika-mcp/src/index.mjs
@@ -47,9 +47,11 @@ cd packages/yandex-metrika-mcp && npm publish
 packages/
 ├── yandex-search-mcp/src/index.mjs     # Single-file MCP server (1 tool: search)
 ├── yandex-wordstat-mcp/
-│   └── src/
-│       ├── index.mjs                   # MCP server (5 tools)
-│       └── auth.mjs                    # OAuth token exchange flow
+│   ├── src/
+│   │   ├── index.mjs                   # MCP server (5 tools)
+│   │   └── convert.mjs                 # Pure v2 wire-format conversion helpers
+│   └── test/
+│       └── conversions.test.mjs        # bun test for convert.mjs
 ├── yandex-webmaster-mcp/
 │   └── src/
 │       ├── index.mjs                   # MCP server (24 tools)
@@ -75,11 +77,16 @@ All servers follow the same pattern:
 - Extracts: position, url, domain, title, headline, passages, snippet, size, lang, cachedUrl
 
 **yandex-wordstat-mcp:**
-- Uses Yandex Wordstat API (JSON responses)
+- Uses Yandex Wordstat **v2** API, served by the Yandex Cloud Search API
+  (`searchapi.api.cloud.yandex.net/v2/wordstat/*`), `Api-Key` header + `folderId` in body —
+  same credentials as `yandex-search-mcp`
+- v2 wire format quirks handled in `convert.mjs`: counts as JSON strings (proto3),
+  RFC3339 dates, `PERIOD_*`/`DEVICE_*`/`REGION_*` enums, region tree under `{regions:[…]}`
 - Rate limited to 10 requests/second (client-side enforcement)
-- Session-level caching for regions tree
-- Tools have quota costs (0-2 units per call)
-- Hierarchical region support with flat lookup maps
+- Session-level caching for regions tree; v2 region responses return IDs only, so names
+  are enriched from the cached tree (flat lookup map)
+- `regions` tool: server-side `granularity` enum (REGION_ALL/CITIES/REGIONS) + client-side
+  `regions` ID filter (v2 has no server-side region-ID filter for distribution)
 
 **yandex-webmaster-mcp:**
 - Uses Yandex Webmaster API v4 (JSON responses)
@@ -95,11 +102,12 @@ All servers follow the same pattern:
 
 ### Environment Variables
 See `.env.example`:
-- `YANDEX_SEARCH_API_KEY` / `YANDEX_FOLDER_ID` for search
-- `YANDEX_WORDSTAT_TOKEN` for wordstat
+- `YANDEX_SEARCH_API_KEY` / `YANDEX_FOLDER_ID` for search **and wordstat**
+- wordstat optionally uses `YANDEX_WORDSTAT_API_KEY` / `YANDEX_WORDSTAT_FOLDER_ID` to keep
+  keys separate (each takes precedence over the search equivalent when set)
 - `YANDEX_WEBMASTER_TOKEN` for webmaster
 - `YANDEX_METRIKA_TOKEN` for metrica
-- `YANDEX_CLIENT_ID` / `YANDEX_CLIENT_SECRET` for OAuth flow (optional)
+- `YANDEX_CLIENT_ID` / `YANDEX_CLIENT_SECRET` for the webmaster/metrika OAuth flow (optional)
 
 ## Skills
 

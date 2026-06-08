@@ -3,18 +3,27 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import {
+  calculateTrend,
+  flattenRegionsTree,
+  formatShare,
+  fromRFC3339Date,
+  normalizePeriod,
+  regionsToStrings,
+  resolveDynamicsDates,
+  toInt,
+  toRFC3339Date,
+  toYandexDevices,
+  toYandexPeriod,
+  toYandexRegionGranularity,
+} from './convert.mjs';
 
-// Handle CLI commands
-const command = process.argv[2];
-if (command === 'auth') {
-  const { runAuth } = await import('./auth.mjs');
-  await runAuth();
-} else {
-  await runServer();
-}
+await runServer();
 
 async function runServer() {
-  const BASE_URL = 'https://api.wordstat.yandex.net';
+  // Wordstat v2 is served by the Yandex Cloud Search API (same product/host as web
+  // search), under /v2/wordstat/*, authenticated with an Api-Key + folderId.
+  const BASE_URL = 'https://searchapi.api.cloud.yandex.net';
   const RATE_LIMIT = 10;
 
   const requestTimestamps = [];
@@ -42,26 +51,35 @@ async function runServer() {
     requestTimestamps.push(Date.now());
   }
 
-  function getToken() {
-    const token = process.env.YANDEX_WORDSTAT_TOKEN;
-    if (!token) {
+  function getCredentials() {
+    const apiKey = process.env.YANDEX_WORDSTAT_API_KEY || process.env.YANDEX_SEARCH_API_KEY;
+    const folderId = process.env.YANDEX_WORDSTAT_FOLDER_ID || process.env.YANDEX_FOLDER_ID;
+    if (!apiKey) {
       throw new Error(
-        'YANDEX_WORDSTAT_TOKEN environment variable is required. Get your OAuth token by running: npx yandex-wordstat-mcp auth',
+        'YANDEX_WORDSTAT_API_KEY or YANDEX_SEARCH_API_KEY environment variable is required. Get an API key from the Yandex Cloud console (service account with role search-api.webSearch.user, API key scope yc.search-api.execute).',
       );
     }
-    return token;
+    if (!folderId) {
+      throw new Error(
+        'YANDEX_FOLDER_ID (or YANDEX_WORDSTAT_FOLDER_ID) environment variable is required. Get your folder ID from the Yandex Cloud console.',
+      );
+    }
+    return { apiKey, folderId };
   }
 
-  async function wordstatRequest(endpoint, body) {
+  // Make a request to the Wordstat v2 API. The folderId is injected into the body.
+  async function wordstatRequest(endpoint, body = {}) {
     await rateLimit();
+
+    const { apiKey, folderId } = getCredentials();
 
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Bearer ${getToken()}`,
+        Authorization: `Api-Key ${apiKey}`,
       },
-      body: body ? JSON.stringify(body) : undefined,
+      body: JSON.stringify({ ...body, folderId }),
     });
 
     if (!response.ok) {
@@ -72,8 +90,12 @@ async function runServer() {
         throw new Error(`Rate limit exceeded. Retry after ${retryAfter ?? 'unknown'} seconds. ${errorText}`);
       }
 
+      if (response.status === 403) {
+        throw new Error(`Forbidden (quota exceeded or insufficient permissions). ${errorText}`);
+      }
+
       if (response.status === 503) {
-        throw new Error(`Service unavailable (quota exceeded). ${errorText}`);
+        throw new Error(`Service unavailable. ${errorText}`);
       }
 
       throw new Error(`Wordstat API error (${response.status}): ${errorText}`);
@@ -85,33 +107,19 @@ async function runServer() {
   // Fetch and cache regions tree
   async function getRegionsTree() {
     if (!regionsTreeCache) {
-      regionsTreeCache = await wordstatRequest('/v1/getRegionsTree');
+      const data = await wordstatRequest('/v2/wordstat/getRegionsTree');
+      regionsTreeCache = data.regions ?? [];
       // Build flat lookup map
-      regionsFlatCache = new Map();
-      flattenRegionsTree(regionsTreeCache, null);
+      regionsFlatCache = flattenRegionsTree(regionsTreeCache, null, new Map());
     }
     return regionsTreeCache;
-  }
-
-  // Recursively flatten tree into a lookup map
-  function flattenRegionsTree(nodes, parentId) {
-    if (!nodes) return;
-    for (const node of nodes) {
-      regionsFlatCache.set(Number(node.value), {
-        label: node.label,
-        parentId: parentId,
-      });
-      if (node.children) {
-        flattenRegionsTree(node.children, Number(node.value));
-      }
-    }
   }
 
   // Trim tree to specified depth
   function trimTreeToDepth(nodes, maxDepth, currentDepth = 1) {
     if (!nodes || currentDepth > maxDepth) return null;
     return nodes.map((node) => ({
-      value: node.value,
+      id: node.id,
       label: node.label,
       children: currentDepth < maxDepth ? trimTreeToDepth(node.children, maxDepth, currentDepth + 1) : null,
     }));
@@ -121,7 +129,7 @@ async function runServer() {
   function findRegionInTree(nodes, regionId) {
     if (!nodes) return null;
     for (const node of nodes) {
-      if (Number(node.value) === regionId) {
+      if (Number(node.id) === regionId) {
         return node;
       }
       if (node.children) {
@@ -132,18 +140,37 @@ async function runServer() {
     return null;
   }
 
+  // Get all descendant region IDs for a given region (inclusive)
+  function getDescendantRegionIds(regionId) {
+    const descendants = new Set([regionId]);
+    if (!regionsTreeCache) return descendants;
+
+    const regionNode = findRegionInTree(regionsTreeCache, regionId);
+    if (!regionNode) return descendants;
+
+    function collectDescendants(node) {
+      if (!node.children) return;
+      for (const child of node.children) {
+        descendants.add(Number(child.id));
+        collectDescendants(child);
+      }
+    }
+    collectDescendants(regionNode);
+    return descendants;
+  }
+
   const server = new McpServer({
     name: 'yandex-wordstat',
-    version: '1.0.0',
+    version: '2.0.0',
   });
 
-  // Tool 1: Get Regions Tree (no quota cost)
+  // Tool 1: Get Regions Tree
   server.registerTool(
     'get-regions-tree',
     {
       title: 'Get Regions Tree',
       description:
-        'Returns the top 3 levels of the Wordstat regions tree (countries, federal districts, major regions). Use get-region-children to drill down into specific regions. Does not consume quota.',
+        'Returns the top 3 levels of the Wordstat regions tree (countries, federal districts, major regions). Use get-region-children to drill down into specific regions.',
       inputSchema: {
         depth: z.number().min(1).max(5).optional().describe('Tree depth to return (1-5, default: 3)'),
       },
@@ -169,7 +196,7 @@ async function runServer() {
     {
       title: 'Get Region Children',
       description:
-        'Returns the children of a specific region. Use this to drill down into a region from get-regions-tree. Does not consume quota.',
+        'Returns the children of a specific region. Use this to drill down into a region from get-regions-tree.',
       inputSchema: {
         regionId: z.number().describe('Region ID to get children for'),
         depth: z.number().min(1).max(3).optional().describe('Depth of children to return (1-3, default: 2)'),
@@ -198,19 +225,25 @@ async function runServer() {
     },
   );
 
-  // Tool 2: Top Requests (1 quota unit)
+  // Tool 2: Top Requests
   server.registerTool(
     'top-requests',
     {
       title: 'Top Requests',
       description:
-        'Returns popular search queries containing the specified keyword for the last 30 days. Also includes similar/related queries. Costs 1 quota unit.',
+        'Returns popular search queries containing the specified keyword for the last 30 days, plus similar/associated queries. The phrase supports Wordstat search operators.',
       inputSchema: {
         phrase: z.string().describe("Keyword to search for (e.g., 'купить телефон')"),
+        numPhrases: z
+          .number()
+          .min(1)
+          .max(2000)
+          .optional()
+          .describe('Number of phrases to return (1-2000, default: 50)'),
         regions: z
           .array(z.number())
           .optional()
-          .describe('Array of region IDs to filter by (get IDs from get-regions-tree)'),
+          .describe('Array of region IDs to scope the query (get IDs from get-regions-tree; e.g. 213 = Moscow)'),
         devices: z
           .array(z.enum(['desktop', 'phone', 'tablet']))
           .optional()
@@ -218,119 +251,101 @@ async function runServer() {
       },
       outputSchema: {
         topRequests: z.array(z.object({ phrase: z.string(), count: z.number() })),
+        associations: z.array(z.object({ phrase: z.string(), count: z.number() })),
+        totalCount: z.number(),
       },
     },
-    async ({ phrase, regions, devices }) => {
-      const body = { phrase };
-      if (regions?.length) body.regions = regions;
-      if (devices?.length) body.devices = devices;
+    async ({ phrase, numPhrases = 50, regions, devices }) => {
+      const body = { phrase, numPhrases };
+      const regionStrings = regionsToStrings(regions);
+      if (regionStrings) body.regions = regionStrings;
+      const deviceEnums = toYandexDevices(devices);
+      if (deviceEnums) body.devices = deviceEnums;
 
-      const data = await wordstatRequest('/v1/topRequests', body);
+      const data = await wordstatRequest('/v2/wordstat/topRequests', body);
+
+      const topRequests = (data.results ?? []).map((r) => ({ phrase: r.phrase, count: toInt(r.count) }));
+      const associations = (data.associations ?? []).map((r) => ({ phrase: r.phrase, count: toInt(r.count) }));
+      const totalCount = toInt(data.totalCount);
+
+      const associationsText = associations.length
+        ? `\n\nRelated queries:\n${associations
+            .slice(0, 10)
+            .map((r) => `• "${r.phrase}" — ${r.count.toLocaleString()}`)
+            .join('\n')}`
+        : '';
 
       return {
         content: [
           {
             type: 'text',
-            text: `Found ${data.topRequests.length} queries for "${phrase}":\n\n${data.topRequests
+            text: `Found ${topRequests.length} queries for "${phrase}" (total matching: ${totalCount.toLocaleString()}):\n\n${topRequests
               .slice(0, 20)
               .map((r, i) => `${i + 1}. "${r.phrase}" — ${r.count.toLocaleString()} queries`)
-              .join('\n')}`,
+              .join('\n')}${associationsText}`,
           },
         ],
-        structuredContent: data,
+        structuredContent: { topRequests, associations, totalCount },
       };
     },
   );
 
-  // Tool 3: Dynamics (2 quota units)
+  // Tool 3: Dynamics
   server.registerTool(
     'dynamics',
     {
       title: 'Search Dynamics',
-      description: 'Returns search volume dynamics (trend) for a keyword over time. Costs 2 quota units.',
+      description:
+        'Returns search volume dynamics (trend) for a keyword over time. Note: all search operators work at daily granularity; weekly/monthly granularity supports only the "+" operator.',
       inputSchema: {
         phrase: z.string().describe('Keyword to analyze trends for'),
         period: z
           .enum(['daily', 'weekly', 'monthly'])
           .optional()
-          .describe('Time granularity: daily (last 60 days), weekly, or monthly (default)'),
-        fromDate: z.string().optional().describe('Start date in YYYY-MM-DD format (default: 1 year ago)'),
-        toDate: z.string().optional().describe('End date in YYYY-MM-DD format (default: today)'),
-        regions: z.array(z.number()).optional().describe('Array of region IDs to filter by'),
+          .describe(
+            'Time granularity: daily (last 59 days), weekly (last 52 weeks), or monthly (default, last 12 months)',
+          ),
+        fromDate: z
+          .string()
+          .optional()
+          .describe('Start date in YYYY-MM-DD format (auto-aligned per period if omitted)'),
+        toDate: z.string().optional().describe('End date in YYYY-MM-DD format (auto-aligned per period if omitted)'),
+        regions: z.array(z.number()).optional().describe('Array of region IDs to scope the query'),
         devices: z
           .array(z.enum(['desktop', 'phone', 'tablet']))
           .optional()
           .describe('Filter by device types'),
       },
       outputSchema: {
-        dynamics: z.array(z.object({ date: z.string(), count: z.number() })),
+        dynamics: z.array(z.object({ date: z.string(), count: z.number(), share: z.number() })),
+        trend: z.string(),
       },
     },
-    async ({ phrase, period = 'monthly', fromDate, toDate, regions, devices }) => {
-      const now = new Date();
-
-      // Calculate default dates based on period
-      let defaultToDate = toDate;
-      let defaultFromDate = fromDate;
-
-      if (!toDate) {
-        if (period === 'monthly') {
-          // Last day of previous month
-          const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-          defaultToDate = lastMonth.toISOString().split('T')[0];
-        } else if (period === 'weekly') {
-          // Last Sunday
-          const lastSunday = new Date(now);
-          lastSunday.setDate(now.getDate() - now.getDay());
-          defaultToDate = lastSunday.toISOString().split('T')[0];
-        } else {
-          // Yesterday for daily
-          const yesterday = new Date(now);
-          yesterday.setDate(yesterday.getDate() - 1);
-          defaultToDate = yesterday.toISOString().split('T')[0];
-        }
-      }
-
-      if (!fromDate) {
-        if (period === 'monthly') {
-          // First day of month, 1 year ago
-          const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1);
-          defaultFromDate = oneYearAgo.toISOString().split('T')[0];
-        } else if (period === 'weekly') {
-          // Monday ~1 year ago
-          const oneYearAgo = new Date(now);
-          oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-          const dayOfWeek = oneYearAgo.getDay();
-          const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-          oneYearAgo.setDate(oneYearAgo.getDate() - daysToMonday);
-          defaultFromDate = oneYearAgo.toISOString().split('T')[0];
-        } else {
-          // 60 days ago for daily
-          const sixtyDaysAgo = new Date(now);
-          sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
-          defaultFromDate = sixtyDaysAgo.toISOString().split('T')[0];
-        }
-      }
+    async ({ phrase, period: rawPeriod, fromDate, toDate, regions, devices }) => {
+      const period = normalizePeriod(rawPeriod);
+      const { fromDate: from, toDate: to } = resolveDynamicsDates(period, fromDate, toDate);
 
       const body = {
         phrase,
-        period,
-        fromDate: defaultFromDate,
-        toDate: defaultToDate,
+        period: toYandexPeriod(period),
+        fromDate: toRFC3339Date(from),
+        toDate: toRFC3339Date(to),
       };
-      if (regions?.length) body.regions = regions;
-      if (devices?.length) body.devices = devices;
+      const regionStrings = regionsToStrings(regions);
+      if (regionStrings) body.regions = regionStrings;
+      const deviceEnums = toYandexDevices(devices);
+      if (deviceEnums) body.devices = deviceEnums;
 
-      const data = await wordstatRequest('/v1/dynamics', body);
+      const data = await wordstatRequest('/v2/wordstat/dynamics', body);
 
-      const points = data.dynamics;
-      let trendText = '';
-      if (points.length >= 2) {
-        const first = points[0].count;
-        const last = points[points.length - 1].count;
-        const change = ((last - first) / first) * 100;
-        trendText = `\n\nTrend: ${change > 0 ? '📈' : '📉'} ${change.toFixed(1)}% change`;
-      }
+      const points = (data.results ?? []).map((p) => ({
+        date: fromRFC3339Date(p.date),
+        count: toInt(p.count),
+        share: p.share ?? 0,
+      }));
+
+      const trend = calculateTrend(points);
+      const trendText = points.length >= 2 ? `\n\nTrend: ${trend}` : '';
 
       return {
         content: [
@@ -341,40 +356,24 @@ async function runServer() {
               .join('\n')}`,
           },
         ],
-        structuredContent: data,
+        structuredContent: { dynamics: points, trend },
       };
     },
   );
 
-  // Get all descendant region IDs for a given region
-  function getDescendantRegionIds(regionId) {
-    const descendants = new Set([regionId]);
-    const fullTree = regionsTreeCache;
-    if (!fullTree) return descendants;
-
-    const regionNode = findRegionInTree(fullTree, regionId);
-    if (!regionNode) return descendants;
-
-    function collectDescendants(node) {
-      if (!node.children) return;
-      for (const child of node.children) {
-        descendants.add(Number(child.value));
-        collectDescendants(child);
-      }
-    }
-    collectDescendants(regionNode);
-    return descendants;
-  }
-
-  // Tool 4: Regions Distribution (2 quota units)
+  // Tool 4: Regions Distribution
   server.registerTool(
     'regions',
     {
       title: 'Regional Distribution',
       description:
-        'Returns how search volume for a keyword is distributed across regions. Includes region names, share percentage and affinity index. Costs 2 quota units.',
+        'Returns how search volume for a keyword is distributed across regions over the last 30 days. Includes region names, share percentage and affinity index. The v2 API has no server-side region filter, so the optional `regions` parameter is applied client-side using the cached regions tree.',
       inputSchema: {
         phrase: z.string().describe('Keyword to analyze regional distribution for'),
+        granularity: z
+          .enum(['all', 'cities', 'regions'])
+          .optional()
+          .describe('Distribution granularity: all (default), cities (cities only), or regions (regions only)'),
         regions: z
           .array(z.number())
           .optional()
@@ -399,48 +398,50 @@ async function runServer() {
         ),
       },
     },
-    async ({ phrase, regions: filterRegions, devices, limit = 20 }) => {
-      const body = { phrase };
-      // Note: API doesn't support regions filter, we filter client-side
-      if (devices?.length) body.devices = devices;
+    async ({ phrase, granularity, regions: filterRegions, devices, limit = 20 }) => {
+      const body = { phrase, region: toYandexRegionGranularity(granularity) };
+      const deviceEnums = toYandexDevices(devices);
+      if (deviceEnums) body.devices = deviceEnums;
 
-      // Fetch regions data and ensure regions tree is cached
-      const [data] = await Promise.all([wordstatRequest('/v1/regions', body), getRegionsTree()]);
+      // Fetch regions data and ensure regions tree is cached (for name enrichment + filtering)
+      const [data] = await Promise.all([wordstatRequest('/v2/wordstat/regions', body), getRegionsTree()]);
 
-      let filteredData = data.regions;
+      // v2 returns region IDs as strings with no names; normalize to numbers.
+      let items = (data.results ?? []).map((r) => ({
+        regionId: Number(r.region),
+        count: toInt(r.count),
+        share: r.share ?? 0,
+        affinityIndex: r.affinityIndex ?? 0,
+      }));
 
-      // If regions filter specified, filter to only include those regions and their descendants
+      // If a regions filter is specified, filter to only those regions and their descendants.
       if (filterRegions?.length) {
         const allowedRegionIds = new Set();
         for (const regionId of filterRegions) {
-          const descendants = getDescendantRegionIds(regionId);
-          for (const id of descendants) {
+          for (const id of getDescendantRegionIds(regionId)) {
             allowedRegionIds.add(id);
           }
         }
-        filteredData = data.regions.filter((r) => allowedRegionIds.has(r.regionId));
+        items = items.filter((r) => allowedRegionIds.has(r.regionId));
       }
 
-      const sorted = [...filteredData].sort((a, b) => b.count - a.count);
-
-      // Enrich with region names
-      const enriched = sorted.slice(0, limit).map((r) => ({
+      const enrichName = (r) => ({
         ...r,
         regionName: regionsFlatCache.get(r.regionId)?.label || `Unknown (${r.regionId})`,
-      }));
+      });
 
-      // Also get top by affinity for interesting insights
-      const topByAffinity = [...filteredData]
+      const enriched = [...items]
+        .sort((a, b) => b.count - a.count)
+        .slice(0, limit)
+        .map(enrichName);
+
+      // Also surface the top by affinity for interesting insights.
+      const topByAffinity = [...items]
         .sort((a, b) => b.affinityIndex - a.affinityIndex)
         .slice(0, 5)
-        .map((r) => ({
-          ...r,
-          regionName: regionsFlatCache.get(r.regionId)?.label || `Unknown (${r.regionId})`,
-        }));
+        .map(enrichName);
 
-      const filterNote = filterRegions?.length
-        ? ` (filtered to ${filteredData.length} regions in specified areas)`
-        : '';
+      const filterNote = filterRegions?.length ? ` (filtered to ${items.length} regions in specified areas)` : '';
 
       return {
         content: [
@@ -452,7 +453,7 @@ async function runServer() {
               enriched
                 .map(
                   (r, i) =>
-                    `${i + 1}. ${r.regionName}: ${r.count.toLocaleString()} queries (${r.share.toFixed(2)}% share, affinity: ${r.affinityIndex.toFixed(0)})`,
+                    `${i + 1}. ${r.regionName}: ${r.count.toLocaleString()} queries (${formatShare(r.share)}% share, affinity: ${r.affinityIndex.toFixed(0)})`,
                 )
                 .join('\n') +
               `\n\n**Top ${Math.min(5, topByAffinity.length)} by affinity (most interested relative to size):**\n` +

@@ -9,10 +9,10 @@ Research keywords and search trends for Russian and CIS markets using Yandex too
 
 ## Available Tools
 
-- `mcp__yandex-wordstat__top-requests` - Find popular queries containing a keyword (costs 1 quota unit)
-- `mcp__yandex-wordstat__dynamics` - Analyze search volume trends over time (costs 2 quota units)
-- `mcp__yandex-wordstat__regions` - See regional distribution of search interest (costs 2 quota units)
-- `mcp__yandex-wordstat__get-regions-tree` - Get region hierarchy for filtering (free)
+- `mcp__yandex-wordstat__top-requests` - Find popular queries containing a keyword (plus related queries)
+- `mcp__yandex-wordstat__dynamics` - Analyze search volume trends over time (daily/weekly/monthly)
+- `mcp__yandex-wordstat__regions` - See regional distribution of search interest
+- `mcp__yandex-wordstat__get-regions-tree` - Get region hierarchy for filtering
 - `mcp__yandex-search__search` - See what currently ranks in Yandex for the keyword
 - `mcp__yandex-webmaster__get-popular-queries` - Check if user's site ranks for terms (requires Webmaster access)
 
