@@ -1,6 +1,11 @@
 # yandex-wordstat-mcp
 
-MCP server for [Yandex Wordstat API](https://wordstat.yandex.com/) — keyword research and search trend analysis for the Russian market.
+MCP server for the **Yandex Wordstat v2 API** — keyword research and search trend analysis for the Russian market.
+
+> ℹ️ This server targets **Wordstat v2**, served by the **Yandex Cloud Search API**
+> (`searchapi.api.cloud.yandex.net/v2/wordstat/*`). It authenticates with a Yandex Cloud
+> **`Api-Key` + folder ID** — *not* the legacy `api.wordstat.yandex.net` OAuth token. The old
+> v1 OAuth flow was removed in v2.0.0; see [Setup](#setup).
 
 [![npm version](https://badge.fury.io/js/yandex-wordstat-mcp.svg)](https://www.npmjs.com/package/yandex-wordstat-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -13,56 +18,39 @@ MCP server for [Yandex Wordstat API](https://wordstat.yandex.com/) — keyword r
 
 ### Features
 
-| Tool | Description | Quota Cost |
-|------|-------------|------------|
-| `get-regions-tree` | Get top 3 levels of region hierarchy (configurable depth) | Free |
-| `get-region-children` | Drill down into a specific region to see its children | Free |
-| `top-requests` | Popular queries containing a keyword (last 30 days) | 1 unit |
-| `dynamics` | Search volume trends over time | 2 units |
-| `regions` | Regional distribution with region names and affinity insights | 2 units |
+| Tool | Description |
+|------|-------------|
+| `get-regions-tree` | Get top 3 levels of region hierarchy (configurable depth) |
+| `get-region-children` | Drill down into a specific region to see its children |
+| `top-requests` | Popular queries containing a keyword (last 30 days) + related queries |
+| `dynamics` | Search volume trends over time (daily / weekly / monthly) |
+| `regions` | Regional distribution with region names and affinity insights |
 
-**v1.2.0 Improvements:**
-- **Smart region caching** — regions tree is fetched once per session
-- **Region names included** — no more cryptic IDs, results show actual region names
-- **Drill-down support** — use `get-region-children` to explore sub-regions
+**v2.0.0 — Wordstat v2 (Yandex Cloud):**
+- **New API** — migrated to the Wordstat v2 API served by the Yandex Cloud Search API
+- **Shared credentials** — uses the same `YANDEX_SEARCH_API_KEY` + `YANDEX_FOLDER_ID` as
+  [`yandex-search-mcp`](https://www.npmjs.com/package/yandex-search-mcp); no separate OAuth token
+- **Region names included** — v2 returns region IDs only; names are resolved from the cached tree
 - **Affinity insights** — `regions` tool shows both top by volume and top by interest
+
+> **Breaking change:** v2.0.0 drops the old OAuth `YANDEX_WORDSTAT_TOKEN` flow. Configure a
+> Yandex Cloud API key instead (see Setup below).
 
 ### Setup
 
-#### Step 1: Create Yandex OAuth App
+> **Prefer a hosted tool?** If you'd rather not manage Yandex Cloud credentials yourself,
+> a hosted MCP endpoint is available at <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a>.
 
-1. Create a [Yandex ID account](https://passport.yandex.com/) if you don't have one
-2. Go to [Yandex OAuth](https://oauth.yandex.com/) and create a new app
-3. Under **Platforms**, check "Web services"
-4. Under **Data access**, search for `wordstat:api` and add it
-5. Click **Create app**
-6. Note your **Client ID** and **Client Secret**
+#### Step 1: Get a Yandex Cloud API key
 
-#### Step 2: Request API Access
+1. In the [Yandex Cloud console](https://console.yandex.cloud/), create a **service account**
+   and assign it the role **`search-api.webSearch.user`**.
+2. Create an **API key** for that service account with the scope **`yc.search-api.execute`**.
+3. Note your **folder ID** (shown in the console, e.g. `b1g…`).
 
-**Important:** You must request access to the Wordstat API separately.
+This is the same key and folder used by `yandex-search-mcp` — you can reuse them.
 
-1. Go to [Yandex Wordstat](https://wordstat.yandex.com/)
-2. Click on your profile → **API access**
-3. Submit a request with your Client ID
-4. Wait for approval (usually 1-2 business days)
-
-#### Step 3: Get Your Token
-
-```bash
-export YANDEX_CLIENT_ID=your_client_id
-export YANDEX_CLIENT_SECRET=your_client_secret
-
-npx yandex-wordstat-mcp auth
-```
-
-This will:
-1. Open your browser to Yandex authorization page
-2. After you authorize, Yandex shows a code
-3. Paste the code into the terminal
-4. Get your access token
-
-#### Step 4: Configure Claude
+#### Step 2: Configure Claude
 
 **Claude Desktop** — edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
@@ -73,17 +61,25 @@ This will:
       "command": "npx",
       "args": ["-y", "yandex-wordstat-mcp"],
       "env": {
-        "YANDEX_WORDSTAT_TOKEN": "your_token_here"
+        "YANDEX_SEARCH_API_KEY": "your_api_key_here",
+        "YANDEX_FOLDER_ID": "your_folder_id_here"
       }
     }
   }
 }
 ```
 
+To keep the wordstat key separate from the search key, set `YANDEX_WORDSTAT_API_KEY`
+(and optionally `YANDEX_WORDSTAT_FOLDER_ID`) instead — each takes precedence over its
+`YANDEX_SEARCH_*` / `YANDEX_FOLDER_ID` equivalent when set.
+
 **Claude Code:**
 
 ```bash
-claude mcp add yandex-wordstat -e YANDEX_WORDSTAT_TOKEN=your_token -- npx -y yandex-wordstat-mcp
+claude mcp add yandex-wordstat \
+  -e YANDEX_SEARCH_API_KEY=your_api_key \
+  -e YANDEX_FOLDER_ID=your_folder_id \
+  -- npx -y yandex-wordstat-mcp
 ```
 
 ### Usage Examples
@@ -109,64 +105,54 @@ Once configured, ask Claude:
 - "Get the Yandex Wordstat regions tree"
 - "What is the region ID for Moscow?"
 
-Online example: <a href="https://redirekto.ru/seo/en" target="_blank">AI SEO-Analysis on redirekto.ru</a>
+Online usage example: <a href="https://seyka.ru" target="_blank">seyka.ru</a>
 
 ---
 
 ## Русский
 
+MCP-сервер для **Yandex Wordstat v2 API** — исследование ключевых слов и анализ поисковых трендов для российского рынка.
+
+> ℹ️ Сервер работает с **Wordstat v2**, который обслуживается **Yandex Cloud Search API**
+> (`searchapi.api.cloud.yandex.net/v2/wordstat/*`), и использует **`Api-Key` + идентификатор
+> каталога** Yandex Cloud, а *не* OAuth-токен старого `api.wordstat.yandex.net`. Старый поток
+> v1 (OAuth) удалён в v2.0.0; см. [Настройку](#настройка).
+
 ### Возможности
 
-| Инструмент | Описание | Расход квоты |
-|------------|----------|--------------|
-| `get-regions-tree` | Получить топ-3 уровня иерархии регионов (глубина настраивается) | Бесплатно |
-| `get-region-children` | Детализация региона — показать дочерние регионы | Бесплатно |
-| `top-requests` | Популярные запросы с ключевым словом (за 30 дней) | 1 единица |
-| `dynamics` | Динамика поисковых запросов во времени | 2 единицы |
-| `regions` | Региональное распределение с названиями и индексом аффинитивности | 2 единицы |
+| Инструмент | Описание |
+|------------|----------|
+| `get-regions-tree` | Получить топ-3 уровня иерархии регионов (глубина настраивается) |
+| `get-region-children` | Детализация региона — показать дочерние регионы |
+| `top-requests` | Популярные запросы с ключевым словом (за 30 дней) + похожие запросы |
+| `dynamics` | Динамика поисковых запросов во времени (день / неделя / месяц) |
+| `regions` | Региональное распределение с названиями и индексом аффинитивности |
 
-**Улучшения v1.2.0:**
-- **Кэширование регионов** — дерево регионов загружается один раз за сессию
-- **Названия регионов** — результаты содержат названия, а не только ID
-- **Детализация** — используйте `get-region-children` для просмотра подрегионов
+**v2.0.0 — Wordstat v2 (Yandex Cloud):**
+- **Новый API** — переход на Wordstat v2, который обслуживается Yandex Cloud Search API
+- **Общие учётные данные** — используются те же `YANDEX_SEARCH_API_KEY` + `YANDEX_FOLDER_ID`,
+  что и в [`yandex-search-mcp`](https://www.npmjs.com/package/yandex-search-mcp); OAuth-токен не нужен
+- **Названия регионов** — v2 возвращает только ID; названия берутся из кэшированного дерева
 - **Аналитика аффинитивности** — `regions` показывает топ по объёму и топ по интересу
+
+> **Несовместимое изменение:** в v2.0.0 удалён старый OAuth-поток `YANDEX_WORDSTAT_TOKEN`.
+> Вместо него настройте API-ключ Yandex Cloud (см. Настройку ниже).
 
 ### Настройка
 
-#### Шаг 1: Создание OAuth-приложения Яндекса
+> **Нужен готовый инструмент?** Если вы не хотите самостоятельно управлять учётными данными
+> Yandex Cloud, доступен размещённый MCP-эндпоинт: <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a>.
 
-1. Создайте [Яндекс ID](https://passport.yandex.com/), если у вас его нет
-2. Перейдите в [Яндекс OAuth](https://oauth.yandex.com/) и создайте новое приложение
-3. В разделе **Платформы** выберите "Веб-сервисы"
-4. В разделе **Доступ к данным** найдите `wordstat:api` и добавьте
-5. Нажмите **Создать приложение**
-6. Сохраните **Client ID** и **Client Secret**
+#### Шаг 1: Получение API-ключа Yandex Cloud
 
-#### Шаг 2: Запрос доступа к API
+1. В [консоли Yandex Cloud](https://console.yandex.cloud/) создайте **сервисный аккаунт**
+   и назначьте ему роль **`search-api.webSearch.user`**.
+2. Создайте для него **API-ключ** с областью действия **`yc.search-api.execute`**.
+3. Запишите **идентификатор каталога** (folder ID, например `b1g…`).
 
-**Важно:** Необходимо отдельно запросить доступ к API Вордстата.
+Это те же ключ и каталог, что использует `yandex-search-mcp` — их можно переиспользовать.
 
-1. Перейдите на [Яндекс Вордстат](https://wordstat.yandex.com/)
-2. Нажмите на профиль → **Доступ к API**
-3. Отправьте заявку с вашим Client ID
-4. Дождитесь подтверждения (обычно 1-2 рабочих дня)
-
-#### Шаг 3: Получение токена
-
-```bash
-export YANDEX_CLIENT_ID=ваш_client_id
-export YANDEX_CLIENT_SECRET=ваш_client_secret
-
-npx yandex-wordstat-mcp auth
-```
-
-Команда:
-1. Откроет браузер на странице авторизации Яндекса
-2. После авторизации Яндекс покажет код
-3. Вставьте код в терминал
-4. Получите токен доступа
-
-#### Шаг 4: Настройка Claude
+#### Шаг 2: Настройка Claude
 
 **Claude Desktop** — отредактируйте `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) или `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
@@ -177,17 +163,25 @@ npx yandex-wordstat-mcp auth
       "command": "npx",
       "args": ["-y", "yandex-wordstat-mcp"],
       "env": {
-        "YANDEX_WORDSTAT_TOKEN": "ваш_токен"
+        "YANDEX_SEARCH_API_KEY": "ваш_api_ключ",
+        "YANDEX_FOLDER_ID": "ваш_folder_id"
       }
     }
   }
 }
 ```
 
+Чтобы использовать для wordstat отдельный ключ, задайте `YANDEX_WORDSTAT_API_KEY`
+(и при необходимости `YANDEX_WORDSTAT_FOLDER_ID`) — они имеют приоритет над
+`YANDEX_SEARCH_API_KEY` / `YANDEX_FOLDER_ID`.
+
 **Claude Code:**
 
 ```bash
-claude mcp add yandex-wordstat -e YANDEX_WORDSTAT_TOKEN=ваш_токен -- npx -y yandex-wordstat-mcp
+claude mcp add yandex-wordstat \
+  -e YANDEX_SEARCH_API_KEY=ваш_api_ключ \
+  -e YANDEX_FOLDER_ID=ваш_folder_id \
+  -- npx -y yandex-wordstat-mcp
 ```
 
 ### Примеры использования
@@ -213,16 +207,15 @@ claude mcp add yandex-wordstat -e YANDEX_WORDSTAT_TOKEN=ваш_токен -- npx
 - "Получи дерево регионов Яндекс Вордстат"
 - "Какой ID региона у Москвы?"
 
-Онлайн пример: <a href="https://redirekto.ru/seo" target="_blank">AI SEO-Анализ на редиректо.ru</a>
+Онлайн пример использования: <a href="https://seyka.ru" target="_blank">seyka.ru</a>
 
 ---
 
-## API Quotas
+## Limits & billing
 
-Yandex Wordstat API has two quota types:
-
-1. **Total daily quota** — limits total API calls per day
-2. **Rate limit** — 10 requests per second (handled automatically)
+- **Rate limit** — 10 requests per second (enforced client-side, automatically)
+- **Billing** — Wordstat v2 is billed through Yandex Cloud (Search API). See your Yandex
+  Cloud console for usage and quotas.
 
 ---
 
@@ -240,12 +233,13 @@ No build step needed — runs directly with Node.
 bun run lint        # check
 bun run lint:fix    # fix issues
 bun run format      # format code
+bun test            # unit tests for the v2 conversion helpers
 ```
 
 Test locally:
 
 ```bash
-YANDEX_WORDSTAT_TOKEN=your-token node src/index.mjs
+YANDEX_SEARCH_API_KEY=your-key YANDEX_FOLDER_ID=your-folder node src/index.mjs
 ```
 
 ---

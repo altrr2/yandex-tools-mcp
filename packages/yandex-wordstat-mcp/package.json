@@ -1,7 +1,7 @@
 {
   "name": "yandex-wordstat-mcp",
-  "version": "1.3.2",
-  "description": "MCP server for Yandex Wordstat API - keyword research and search trends for Russian market",
+  "version": "2.0.0",
+  "description": "MCP server for the Yandex Wordstat v2 API (Yandex Cloud Search API) - keyword research and search trends for Russian market",
   "type": "module",
   "main": "src/index.mjs",
   "bin": {
@@ -13,7 +13,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "start": "node src/index.mjs"
+    "start": "node src/index.mjs",
+    "test": "bun test"
   },
   "keywords": [
     "mcp",
@@ -43,7 +44,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.1",
-    "zod": "^4.3.5"
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.4.3"
   }
 }
