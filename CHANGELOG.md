@@ -4,6 +4,25 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2026-07-01
+
+### yandex-webmaster-mcp — 1.2.0
+
+#### Added
+Ten new tools expanding Yandex Webmaster API v4 coverage (24 → 34 tools):
+- **Recrawl:** `get-recrawl-queue` (list tasks), `get-recrawl-task` (task status),
+  and `submit-recrawl` — the server's first write operation, which queues a URL
+  for reindexing and consumes the daily recrawl quota.
+- **Search queries:** `get-single-query-history`
+  (`/search-queries/{query-id}/history`) and `get-query-analytics`
+  (`POST /query-analytics/list`, the query↔URL intersection report).
+- **Sitemaps:** `get-user-sitemap` — details for a single user-added sitemap.
+- **Feeds:** `get-feeds` (`/feeds/list`) and `get-feed-status`
+  (`/feeds/add/info`).
+- **Static references:** `get-region-ids` and `get-feed-regions` — Yandex
+  documents these region ID lists rather than exposing an endpoint, so they are
+  served from bundled data (no API call).
+
 ## 2026-06-08
 
 ### yandex-wordstat-mcp — 2.0.0
