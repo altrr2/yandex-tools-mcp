@@ -4,6 +4,47 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2026-07-02
+
+### yandex-metrika-mcp — 1.2.0
+
+#### Added
+Thirty-four pre-built SEO report tools layered on the Reporting API
+(`/stat/v1/data`), bringing the server from 10 to 44 tools. All were verified
+live against a real counter. Grouped as:
+- **Bounce & behavior:** `get-high-bounce-pages-organic`, `get-critical-pages`,
+  `get-bounce-comparison-search-engines`, `get-bounce-by-devices-organic`,
+  `get-bounce-device-search-engine`.
+- **Page & exit analysis:** `get-page-depth-by-sections`,
+  `get-exit-pages-by-section`, `get-entry-exit-paths`,
+  `get-top-exit-pages-organic`, `get-exit-pages-by-devices`.
+- **Organic conversions** (optional `goal_id`, else all goals):
+  `get-conversions-by-search-engine`, `get-conversions-by-landing-pages`,
+  `get-conversions-by-search-phrases`, `get-conversions-by-devices`,
+  `get-conversions-by-regions`, `get-conversions-device-region`.
+- **Referral:** `get-referral-donors-behavior`, `get-referral-full-urls`,
+  `get-quality-referral-traffic`, `get-referral-conversions`.
+- **Social:** `get-social-networks-traffic`, `get-social-networks-quality`,
+  `get-social-landing-pages`.
+- **Audience & demographics:** `get-new-vs-returning-organic`,
+  `get-visit-frequency-organic`, `get-demographics-organic`,
+  `get-audience-interests`.
+- **Temporal:** `get-organic-activity-by-hour`,
+  `get-organic-activity-by-day-of-week`, `get-organic-traffic-dynamics`,
+  `get-organic-seasonality`.
+- **Technology:** `get-organic-browsers`, `get-problematic-os`,
+  `get-screen-resolutions`.
+
+Most tools filter to organic search (`ym:s:trafficSource=='organic'`) and share
+new `statData` / `formatReport` helpers.
+
+#### Fixed
+- `get-traffic-summary` crashed (`metrics is not iterable`) — it read
+  `data.totals[0]` (a single number) instead of the flat `data.totals` array.
+- `get-traffic-summary` and `get-traffic-sources` multiplied `bounceRate` by 100,
+  displaying e.g. "3032%"; the Reporting API already returns it as a 0–100
+  percentage. `get-report`'s totals-only fallback had the same `totals[0]` bug.
+
 ## 2026-07-01
 
 ### yandex-webmaster-mcp — 1.2.0
