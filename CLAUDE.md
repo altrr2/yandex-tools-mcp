@@ -54,7 +54,7 @@ packages/
 │       └── conversions.test.mjs        # bun test for convert.mjs
 ├── yandex-webmaster-mcp/
 │   └── src/
-│       ├── index.mjs                   # MCP server (24 tools)
+│       ├── index.mjs                   # MCP server (34 tools)
 │       └── auth.mjs                    # OAuth token exchange flow
 └── yandex-metrika-mcp/
     └── src/
@@ -91,7 +91,12 @@ All servers follow the same pattern:
 **yandex-webmaster-mcp:**
 - Uses Yandex Webmaster API v4 (JSON responses)
 - Caches user_id for the session (required for all API calls)
-- Read-only tools: site stats, search queries, indexing, backlinks, sitemaps, diagnostics
+- Mostly read-only tools: site stats, search queries, query analytics, indexing, backlinks,
+  sitemaps, diagnostics, recrawl queue/status, feeds
+- One write tool: `submit-recrawl` (POST /recrawl/queue) queues a URL for reindexing and
+  consumes the daily recrawl quota
+- `get-region-ids` and `get-feed-regions` are static references (no API call) — Yandex
+  documents these region ID lists rather than exposing an endpoint
 - Requires verified site ownership in Yandex Webmaster
 
 **yandex-metrika-mcp:**
