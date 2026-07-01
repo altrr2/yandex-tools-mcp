@@ -23,6 +23,8 @@ MCP server for [Yandex Webmaster API](https://yandex.com/dev/webmaster/doc/en/) 
 | `get-diagnostics` | Site health diagnostics |
 | `get-popular-queries` | Popular search queries (shows, clicks, positions) |
 | `get-query-history` | Aggregated query statistics over time |
+| `get-single-query-history` | Statistics over time for one specific query |
+| `get-query-analytics` | Query↔URL intersection report (last ~2 weeks) |
 | `get-indexing-history` | Pages downloaded by robot (by HTTP status) |
 | `get-indexing-samples` | Examples of downloaded pages |
 | `get-insearch-history` | Pages in search results over time |
@@ -36,9 +38,17 @@ MCP server for [Yandex Webmaster API](https://yandex.com/dev/webmaster/doc/en/) 
 | `get-sitemaps` | Auto-detected sitemap files |
 | `get-sitemap` | Specific sitemap details |
 | `get-user-sitemaps` | User-added sitemaps |
+| `get-user-sitemap` | Details of a single user-added sitemap |
 | `get-important-urls` | Monitored important pages |
 | `get-important-url-history` | Important page change history |
 | `get-recrawl-quota` | Reindexing quota status |
+| `get-recrawl-queue` | List of pending/recent recrawl tasks |
+| `get-recrawl-task` | Status of a specific recrawl task |
+| `submit-recrawl` | Queue a URL for reindexing (write; uses quota) |
+| `get-feeds` | Data feeds loaded for the site |
+| `get-feed-status` | Status of an async feed upload task |
+| `get-feed-regions` | Regions supported for feed uploads |
+| `get-region-ids` | Static reference of common Yandex region IDs |
 
 ### Installation
 
@@ -143,6 +153,8 @@ Set the token as `YANDEX_WEBMASTER_TOKEN` environment variable.
 | `get-diagnostics` | Диагностика проблем сайта |
 | `get-popular-queries` | Популярные поисковые запросы |
 | `get-query-history` | История статистики запросов |
+| `get-single-query-history` | История статистики по конкретному запросу |
+| `get-query-analytics` | Отчёт пересечения запросов и URL (~2 недели) |
 | `get-indexing-history` | История загрузки страниц роботом |
 | `get-indexing-samples` | Примеры загруженных страниц |
 | `get-insearch-history` | История страниц в поиске |
@@ -156,9 +168,17 @@ Set the token as `YANDEX_WEBMASTER_TOKEN` environment variable.
 | `get-sitemaps` | Обнаруженные файлы Sitemap |
 | `get-sitemap` | Детали конкретного Sitemap |
 | `get-user-sitemaps` | Добавленные пользователем Sitemap |
+| `get-user-sitemap` | Детали конкретного добавленного Sitemap |
 | `get-important-urls` | Мониторинг важных страниц |
 | `get-important-url-history` | История изменений важных страниц |
 | `get-recrawl-quota` | Квота на переобход |
+| `get-recrawl-queue` | Список задач на переобход |
+| `get-recrawl-task` | Статус задачи на переобход |
+| `submit-recrawl` | Отправить URL на переобход (запись; расходует квоту) |
+| `get-feeds` | Загруженные фиды сайта |
+| `get-feed-status` | Статус асинхронной загрузки фида |
+| `get-feed-regions` | Регионы, доступные для загрузки фидов |
+| `get-region-ids` | Справочник частых ID регионов Яндекса |
 
 ### Установка
 
