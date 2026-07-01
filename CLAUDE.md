@@ -58,7 +58,7 @@ packages/
 │       └── auth.mjs                    # OAuth token exchange flow
 └── yandex-metrika-mcp/
     └── src/
-        ├── index.mjs                   # MCP server (10 tools)
+        ├── index.mjs                   # MCP server (44 tools)
         └── auth.mjs                    # OAuth token exchange flow
 ```
 
@@ -101,9 +101,15 @@ All servers follow the same pattern:
 
 **yandex-metrika-mcp:**
 - Uses Yandex Metrica API (JSON responses)
-- Management API for counters/goals, Reporting API for statistics
+- Management API for counters/goals, Reporting API (`/stat/v1/data`) for statistics
 - Default date range: last 30 days
-- Flexible custom reports with any dimensions/metrics
+- Flexible custom reports with any dimensions/metrics (`get-report`)
+- 34 pre-built SEO report tools layered on the Reporting API: bounce/behavior,
+  page & exit analysis, organic conversions (optional `goal_id`, else "any goal"),
+  referral, social, audience/demographics, temporal patterns, technology. Most
+  filter to organic search via `ym:s:trafficSource=='organic'` and share the
+  `statData` / `formatReport` helpers. Metrica returns `bounceRate` and
+  conversion rates as 0–100 percentages (do not multiply by 100)
 
 ### Environment Variables
 See `.env.example`:
