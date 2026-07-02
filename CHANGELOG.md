@@ -4,6 +4,21 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2026-07-02 (later)
+
+### yandex-search-mcp — 1.3.1
+
+#### Fixed
+- Internationalized (IDN) domains no longer leak their punycode form to the
+  model. Yandex returns Cyrillic `.рф`/IDN hosts as ASCII punycode
+  (`заречнев.рф` → `xn--d1abiacj6ales3d1b.xn--p1ai`); result `domain` and `url`
+  fields are now converted back to Unicode for display via `node:url`'s
+  `domainToUnicode` (non-IDN hosts and decode failures pass through unchanged).
+
+#### Changed
+- README: replaced the `redirekto.ru/seo` link with the hosted version
+  (`unoapi.ru/services/yandex-search`) and an online example (`seyka.ru`).
+
 ## 2026-07-02
 
 ### yandex-metrika-mcp — 1.2.0

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { domainToUnicode } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
@@ -40,13 +41,41 @@ function cleanText(text) {
     .trim();
 }
 
+// Yandex returns internationalized (Cyrillic .рф etc.) domains in their ASCII
+// punycode form — `заречнев.рф` arrives as `xn--d1abiacj6ales3d1b.xn--p1ai`,
+// which is gibberish to the model reading the results. Convert IDN hosts back to
+// Unicode for DISPLAY. Only touches `xn--` hosts; anything else (and any decode
+// failure) is returned verbatim.
+function toDisplayHost(host) {
+  if (!host || !/xn--/i.test(host)) return host;
+  try {
+    return domainToUnicode(host) || host;
+  } catch {
+    return host;
+  }
+}
+
+// Display form of a full URL: swaps a punycode host for its Unicode form while
+// leaving the scheme/path/query untouched, so the result stays a usable URL.
+function toDisplayUrl(url) {
+  try {
+    const parsed = new URL(url);
+    const display = toDisplayHost(parsed.hostname);
+    if (display === parsed.hostname) return url;
+    const idx = url.toLowerCase().indexOf(parsed.hostname);
+    return idx === -1 ? url : url.slice(0, idx) + display + url.slice(idx + parsed.hostname.length);
+  } catch {
+    return url;
+  }
+}
+
 function extractDomain(url) {
   try {
     const urlObj = new URL(url);
-    return urlObj.hostname;
+    return toDisplayHost(urlObj.hostname);
   } catch {
     const match = url.match(/^(?:https?:\/\/)?([^/?#]+)/i);
-    return match?.[1] || '';
+    return toDisplayHost(match?.[1] || '');
   }
 }
 
@@ -99,7 +128,7 @@ function parseXMLResults(xmlData, includeImages = false) {
 
     const result = {
       position,
-      url,
+      url: toDisplayUrl(url),
       domain: extractDomain(url),
       title,
       headline,
