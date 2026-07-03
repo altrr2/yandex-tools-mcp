@@ -1,6 +1,6 @@
 {
   "name": "yandex-wordstat-mcp",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "MCP server for the Yandex Wordstat v2 API (Yandex Cloud Search API) - keyword research and search trends for Russian market",
   "type": "module",
   "main": "src/index.mjs",

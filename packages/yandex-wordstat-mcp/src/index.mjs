@@ -161,7 +161,7 @@ async function runServer() {
 
   const server = new McpServer({
     name: 'yandex-wordstat',
-    version: '2.0.0',
+    version: '2.0.1',
   });
 
   // Tool 1: Get Regions Tree
@@ -362,6 +362,14 @@ async function runServer() {
   );
 
   // Tool 4: Regions Distribution
+  const regionRowSchema = z.object({
+    regionId: z.number(),
+    regionName: z.string(),
+    count: z.number(),
+    share: z.number(),
+    affinityIndex: z.number(),
+  });
+
   server.registerTool(
     'regions',
     {
@@ -387,15 +395,8 @@ async function runServer() {
         limit: z.number().min(1).max(50).optional().describe('Number of top regions to return (default: 20)'),
       },
       outputSchema: {
-        regions: z.array(
-          z.object({
-            regionId: z.number(),
-            regionName: z.string(),
-            count: z.number(),
-            share: z.number(),
-            affinityIndex: z.number(),
-          }),
-        ),
+        regions: z.array(regionRowSchema),
+        topByAffinity: z.array(regionRowSchema),
       },
     },
     async ({ phrase, granularity, regions: filterRegions, devices, limit = 20 }) => {
