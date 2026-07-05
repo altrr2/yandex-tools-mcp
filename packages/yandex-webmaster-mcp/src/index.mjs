@@ -14,7 +14,7 @@ if (command === 'auth') {
 }
 
 async function runServer() {
-  const BASE_URL = 'https://api.webmaster.yandex.net/v4';
+  const BASE_URL = process.env.YANDEX_WEBMASTER_BASE_URL || 'https://api.webmaster.yandex.net/v4';
 
   // Cache user_id for the session
   let cachedUserId = null;
@@ -629,7 +629,7 @@ async function runServer() {
       },
     },
     async ({ host_id, date_from, date_to }) => {
-      let endpoint = await hostEndpoint(host_id, '/indexing/insearch/history');
+      let endpoint = await hostEndpoint(host_id, '/search-urls/in-search/history');
       const params = new URLSearchParams();
       if (date_from) params.set('date_from', formatDate(date_from));
       if (date_to) params.set('date_to', formatDate(date_to));
@@ -662,7 +662,7 @@ async function runServer() {
       },
     },
     async ({ host_id, limit = 10, offset }) => {
-      let endpoint = await hostEndpoint(host_id, '/indexing/insearch/samples');
+      let endpoint = await hostEndpoint(host_id, '/search-urls/in-search/samples');
       const params = new URLSearchParams();
       params.set('limit', limit.toString());
       if (offset) params.set('offset', offset.toString());
@@ -825,7 +825,7 @@ async function runServer() {
       },
     },
     async ({ host_id, limit = 10, offset }) => {
-      let endpoint = await hostEndpoint(host_id, '/links/internal/samples');
+      let endpoint = await hostEndpoint(host_id, '/links/internal/broken/samples');
       const params = new URLSearchParams();
       params.set('limit', limit.toString());
       if (offset) params.set('offset', offset.toString());
@@ -857,7 +857,7 @@ async function runServer() {
       },
     },
     async ({ host_id, date_from, date_to }) => {
-      let endpoint = await hostEndpoint(host_id, '/links/internal/history');
+      let endpoint = await hostEndpoint(host_id, '/links/internal/broken/history');
       const params = new URLSearchParams();
       if (date_from) params.set('date_from', formatDate(date_from));
       if (date_to) params.set('date_to', formatDate(date_to));
