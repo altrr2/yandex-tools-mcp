@@ -4,6 +4,25 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2026-07-05 (later)
+
+### yandex-metrika-mcp — 1.2.1
+
+#### Fixed
+- Two Reporting API attribute names replaced with their documented
+  equivalents (issue #3). The old names are undocumented aliases that
+  currently return identical data, so nothing was broken live, but only
+  the documented names are contractual:
+  - `ym:s:sumGoalReachesAny` → `ym:s:anyGoalReaches` in the `goalMetrics`
+    helper — the "any goal" path of all 8 goal-conversion tools, including
+    the derived sort in the three tools that order by it
+  - `ym:s:dayOfWeekName` → `ym:s:dayOfWeek` in
+    `get-organic-activity-by-day-of-week`
+
+#### Changed
+- Base hosts use the documented `api-metrika.yandex.net` spelling instead
+  of `api-metrica.yandex.net` (both resolve to the same service).
+
 ## 2026-07-05
 
 ### yandex-webmaster-mcp — 1.2.1
