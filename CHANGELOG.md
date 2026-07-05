@@ -4,6 +4,27 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2026-07-05
+
+### yandex-webmaster-mcp — 1.2.1
+
+#### Fixed
+- Four tools called upstream paths that 404 against the Webmaster API v4
+  (issue #2); they now match the official docs and were verified live:
+  - `get-insearch-history`: `/indexing/insearch/history` →
+    `/search-urls/in-search/history`
+  - `get-insearch-samples`: `/indexing/insearch/samples` →
+    `/search-urls/in-search/samples`
+  - `get-broken-internal-links`: `/links/internal/samples` →
+    `/links/internal/broken/samples`
+  - `get-broken-internal-links-history`: `/links/internal/history` →
+    `/links/internal/broken/history`
+
+#### Added
+- `test/endpoints.test.mjs` — end-to-end test that spawns the MCP server
+  against a mock API and asserts the upstream path each tool requests. To
+  support it, `BASE_URL` is overridable via `YANDEX_WEBMASTER_BASE_URL`.
+
 ## 2026-07-02 (later)
 
 ### yandex-search-mcp — 1.3.1
