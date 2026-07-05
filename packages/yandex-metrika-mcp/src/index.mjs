@@ -14,8 +14,8 @@ if (command === 'auth') {
 }
 
 async function runServer() {
-  const MANAGEMENT_URL = 'https://api-metrica.yandex.net/management/v1';
-  const STAT_URL = 'https://api-metrica.yandex.net/stat/v1';
+  const MANAGEMENT_URL = 'https://api-metrika.yandex.net/management/v1';
+  const STAT_URL = 'https://api-metrika.yandex.net/stat/v1';
 
   function getToken() {
     const token = process.env.YANDEX_METRIKA_TOKEN;
@@ -118,7 +118,7 @@ async function runServer() {
   const goalMetrics = (goal_id) =>
     goal_id
       ? { metrics: `ym:s:goal${goal_id}reaches,ym:s:goal${goal_id}conversionRate`, labels: ['goal reaches', 'conv %'] }
-      : { metrics: 'ym:s:sumGoalReachesAny,ym:s:anyGoalConversionRate', labels: ['goal reaches (any)', 'conv %'] };
+      : { metrics: 'ym:s:anyGoalReaches,ym:s:anyGoalConversionRate', labels: ['goal reaches (any)', 'conv %'] };
   const goalIdSchema = { goal_id: z.number().optional().describe('Goal ID (from get-goals); defaults to all goals') };
 
   const server = new McpServer({ name: 'yandex-metrika', version: '1.0.0' });
@@ -1300,7 +1300,7 @@ async function runServer() {
       const data = await statData({
         counter_id,
         metrics: 'ym:s:visits',
-        dimensions: 'ym:s:dayOfWeekName',
+        dimensions: 'ym:s:dayOfWeek',
         filters: ORGANIC,
         sort: '-ym:s:visits',
         date_from,
