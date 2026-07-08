@@ -15,6 +15,10 @@
     "yandex-metrika": {
       "command": "node",
       "args": ["--env-file=.env", "packages/yandex-metrika-mcp/src/index.mjs"]
+    },
+    "yandex-direct": {
+      "command": "node",
+      "args": ["--env-file=.env", "packages/yandex-direct-mcp/src/index.mjs"]
     }
   }
 }

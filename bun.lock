@@ -8,9 +8,20 @@
         "@biomejs/biome": "^2.5.2",
       },
     },
+    "packages/yandex-direct-mcp": {
+      "name": "yandex-direct-mcp",
+      "version": "1.0.0",
+      "bin": {
+        "yandex-direct-mcp": "src/index.mjs",
+      },
+      "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.29.0",
+        "zod": "^4.4.3",
+      },
+    },
     "packages/yandex-metrika-mcp": {
       "name": "yandex-metrika-mcp",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "bin": {
         "yandex-metrika-mcp": "src/index.mjs",
       },
@@ -32,7 +43,7 @@
     },
     "packages/yandex-webmaster-mcp": {
       "name": "yandex-webmaster-mcp",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "bin": {
         "yandex-webmaster-mcp": "src/index.mjs",
       },
@@ -249,6 +260,8 @@
     "which": ["which@2.0.2", "", { "dependencies": { "isexe": "^2.0.0" }, "bin": { "node-which": "./bin/node-which" } }, "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA=="],
 
     "wrappy": ["wrappy@1.0.2", "", {}, "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="],
+
+    "yandex-direct-mcp": ["yandex-direct-mcp@workspace:packages/yandex-direct-mcp"],
 
     "yandex-metrika-mcp": ["yandex-metrika-mcp@workspace:packages/yandex-metrika-mcp"],
 

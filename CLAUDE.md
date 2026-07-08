@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Monorepo containing four MCP (Model Context Protocol) servers for Yandex APIs:
+Monorepo containing five MCP (Model Context Protocol) servers for Yandex APIs:
 - **yandex-search-mcp**: Web search optimized for Russian/Cyrillic content
 - **yandex-wordstat-mcp**: Keyword research and search trend analysis (**Wordstat v2** via the Yandex Cloud Search API)
 - **yandex-webmaster-mcp**: Site analytics, indexing status, and SEO diagnostics
 - **yandex-metrika-mcp**: Web analytics, traffic data, and visitor insights
+- **yandex-direct-mcp**: PPC campaign management — campaigns, ad groups, ads, keywords, bids, statistics (the only server with real-money writes)
 
 ## Commands
 
@@ -26,12 +27,14 @@ YANDEX_SEARCH_API_KEY=key YANDEX_FOLDER_ID=folder node packages/yandex-wordstat-
 YANDEX_SEARCH_API_KEY=key YANDEX_FOLDER_ID=folder node packages/yandex-search-mcp/src/index.mjs
 YANDEX_WEBMASTER_TOKEN=token node packages/yandex-webmaster-mcp/src/index.mjs
 YANDEX_METRIKA_TOKEN=token node packages/yandex-metrika-mcp/src/index.mjs
+YANDEX_DIRECT_TOKEN=token node packages/yandex-direct-mcp/src/index.mjs   # defaults to sandbox; YANDEX_DIRECT_LIVE=1 for production
 
 # Publish packages
 cd packages/yandex-wordstat-mcp && npm publish
 cd packages/yandex-search-mcp && npm publish
 cd packages/yandex-webmaster-mcp && npm publish
 cd packages/yandex-metrika-mcp && npm publish
+cd packages/yandex-direct-mcp && npm publish
 ```
 
 ## Architecture
@@ -56,10 +59,18 @@ packages/
 │   └── src/
 │       ├── index.mjs                   # MCP server (34 tools)
 │       └── auth.mjs                    # OAuth token exchange flow
-└── yandex-metrika-mcp/
+├── yandex-metrika-mcp/
+│   └── src/
+│       ├── index.mjs                   # MCP server (44 tools)
+│       └── auth.mjs                    # OAuth token exchange flow
+└── yandex-direct-mcp/                  # Multi-file (unlike siblings): ~18 tools split by resource
     └── src/
-        ├── index.mjs                   # MCP server (44 tools)
-        └── auth.mjs                    # OAuth token exchange flow
+        ├── index.mjs                   # Thin entry: CLI dispatch, build client, register tool groups
+        ├── auth.mjs                    # OAuth token exchange flow
+        ├── client.mjs                  # v5 directRequest + Reports reportRequest + Live4 liveV4Request
+        ├── money.mjs                   # toMicro/fromMicro (micro-unit conversion)
+        ├── format.mjs                  # summarizeResults (mutation result formatter), today()
+        └── tools/                      # campaigns, adgroups, ads, keywords, reports, account
 ```
 
 ### MCP Protocol Pattern
@@ -111,6 +122,30 @@ All servers follow the same pattern:
   `statData` / `formatReport` helpers. Metrica returns `bounceRate` and
   conversion rates as 0–100 percentages (do not multiply by 100)
 
+**yandex-direct-mcp:**
+- Uses Yandex Direct API **v5** (JSON). Split into modules (not single-file): a shared
+  `client` (built once in `index.mjs`, bound to host + token) is passed to each
+  `register*Tools(server, client)` in `src/tools/`
+- **Sandbox by default** for safety — hits `api-sandbox.direct.yandex.com` unless
+  `YANDEX_DIRECT_LIVE=1`, which switches to production (`api.direct.yandex.com`); the startup
+  stderr line reports `SANDBOX` vs `LIVE (real money)`
+- **Auth differs from siblings**: `Authorization: Bearer <token>` (not the `OAuth` prefix used
+  by webmaster/metrika); optional `Client-Login` header when `YANDEX_DIRECT_LOGIN` is set
+  (agency/managed accounts)
+- v5 quirks in `client.mjs`: services are POST endpoints with a `{ method, params }` body and
+  return errors **inside** the JSON body (`data.error`) even on HTTP 200 — `directRequest`
+  inspects the body and throws
+- **Money is micro-units** (currency × 1,000,000) — `money.mjs` `toMicro`/`fromMicro`; tools
+  accept plain currency amounts (rubles) and convert at the boundary
+- **`get-report`** is a flexible statistics engine (like metrika's) on the separate Reports
+  service (`reportRequest`): returns **TSV**, may reply `201/202` → polls `retryIn` seconds;
+  requests money in real currency (`returnMoneyInMicros:false`) so no conversion on output
+- **`get-balance`** uses the older **Live v4** JSON API (`liveV4Request`, token in body) since
+  v5 has no balance endpoint
+- **Write tools** (`create-*`, `update-*`, `manage-*`, `add-keywords`, `set-bids`,
+  `set-negative-keywords`) are flagged as WRITE in their descriptions (no code-level gate,
+  same convention as webmaster's `submit-recrawl`); the sandbox default is the real guard
+
 ### Environment Variables
 See `.env.example`:
 - `YANDEX_SEARCH_API_KEY` / `YANDEX_FOLDER_ID` for search **and wordstat**
@@ -118,7 +153,9 @@ See `.env.example`:
   keys separate (each takes precedence over the search equivalent when set)
 - `YANDEX_WEBMASTER_TOKEN` for webmaster
 - `YANDEX_METRIKA_TOKEN` for metrica
-- `YANDEX_CLIENT_ID` / `YANDEX_CLIENT_SECRET` for the webmaster/metrika OAuth flow (optional)
+- `YANDEX_DIRECT_TOKEN` for direct; optional `YANDEX_DIRECT_LIVE=1` (production instead of the
+  default sandbox) and `YANDEX_DIRECT_LOGIN` (agency `Client-Login`)
+- `YANDEX_CLIENT_ID` / `YANDEX_CLIENT_SECRET` for the webmaster/metrika/direct OAuth flow (optional)
 
 ## Skills
 
