@@ -31,6 +31,15 @@
       "env": {
         "YANDEX_METRIKA_TOKEN": "${YANDEX_METRIKA_TOKEN}"
       }
+    },
+    "yandex-direct": {
+      "command": "npx",
+      "args": ["-y", "yandex-direct-mcp"],
+      "env": {
+        "YANDEX_DIRECT_TOKEN": "${YANDEX_DIRECT_TOKEN}",
+        "YANDEX_DIRECT_LIVE": "${YANDEX_DIRECT_LIVE}",
+        "YANDEX_DIRECT_LOGIN": "${YANDEX_DIRECT_LOGIN}"
+      }
     }
   }
 }

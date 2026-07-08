@@ -16,6 +16,7 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Web search via Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Site analytics, indexing & SEO via Yandex Webmaster API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
 | [yandex-metrika-mcp](./packages/yandex-metrika-mcp) | Web analytics & traffic data via Yandex Metrika API | [![npm](https://img.shields.io/npm/v/yandex-metrika-mcp)](https://www.npmjs.com/package/yandex-metrika-mcp) |
+| [yandex-direct-mcp](./packages/yandex-direct-mcp) | PPC campaign management (campaigns, ads, keywords, bids, stats) via Yandex Direct API | [![npm](https://img.shields.io/npm/v/yandex-direct-mcp)](https://www.npmjs.com/package/yandex-direct-mcp) |
 
 ### Quick Start
 
@@ -87,13 +88,29 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 }
 ```
 
+**Yandex Direct** (PPC campaign management — defaults to sandbox; set `YANDEX_DIRECT_LIVE=1` for the real account):
+
+```json
+{
+  "mcpServers": {
+    "yandex-direct": {
+      "command": "npx",
+      "args": ["-y", "yandex-direct-mcp"],
+      "env": {
+        "YANDEX_DIRECT_TOKEN": "your_oauth_token"
+      }
+    }
+  }
+}
+```
+
 See individual package READMEs for detailed setup instructions.
 
 Online usage example: <a href="https://seyka.ru" target="_blank">seyka.ru</a>
 
 ### Claude Code Plugin
 
-Install all four MCPs as a single plugin with built-in skills for keyword research and competitive analysis:
+Install all five MCPs as a single plugin with built-in skills for keyword research and competitive analysis:
 
 ```bash
 # Set your API keys
@@ -101,6 +118,7 @@ export YANDEX_SEARCH_API_KEY=your_api_key   # also used by Wordstat
 export YANDEX_FOLDER_ID=your_folder_id      # also used by Wordstat
 export YANDEX_WEBMASTER_TOKEN=your_oauth_token
 export YANDEX_METRIKA_TOKEN=your_oauth_token
+export YANDEX_DIRECT_TOKEN=your_oauth_token  # defaults to sandbox
 
 # Run with plugin
 claude --plugin-dir /path/to/yandex-tools-mcp
@@ -122,6 +140,7 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 | [yandex-search-mcp](./packages/yandex-search-mcp) | Веб-поиск через Yandex Search API | [![npm](https://img.shields.io/npm/v/yandex-search-mcp)](https://www.npmjs.com/package/yandex-search-mcp) |
 | [yandex-webmaster-mcp](./packages/yandex-webmaster-mcp) | Аналитика сайта, индексация и SEO через Яндекс Вебмастер API | [![npm](https://img.shields.io/npm/v/yandex-webmaster-mcp)](https://www.npmjs.com/package/yandex-webmaster-mcp) |
 | [yandex-metrika-mcp](./packages/yandex-metrika-mcp) | Веб-аналитика и данные о трафике через Яндекс Метрика API | [![npm](https://img.shields.io/npm/v/yandex-metrika-mcp)](https://www.npmjs.com/package/yandex-metrika-mcp) |
+| [yandex-direct-mcp](./packages/yandex-direct-mcp) | Управление РРС-кампаниями (кампании, объявления, фразы, ставки, статистика) через API Яндекс Директа | [![npm](https://img.shields.io/npm/v/yandex-direct-mcp)](https://www.npmjs.com/package/yandex-direct-mcp) |
 
 ### Быстрый старт
 
@@ -193,13 +212,29 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 }
 ```
 
+**Яндекс Директ** (управление РРС-кампаниями — по умолчанию песочница; установите `YANDEX_DIRECT_LIVE=1` для боевого аккаунта):
+
+```json
+{
+  "mcpServers": {
+    "yandex-direct": {
+      "command": "npx",
+      "args": ["-y", "yandex-direct-mcp"],
+      "env": {
+        "YANDEX_DIRECT_TOKEN": "ваш_oauth_токен"
+      }
+    }
+  }
+}
+```
+
 Подробные инструкции по настройке в README каждого пакета.
 
 Онлайн пример использования: <a href="https://seyka.ru" target="_blank">seyka.ru</a>
 
 ### Плагин для Claude Code
 
-Установите все четыре MCP как единый плагин со встроенными навыками для исследования ключевых слов и анализа конкурентов:
+Установите все пять MCP как единый плагин со встроенными навыками для исследования ключевых слов и анализа конкурентов:
 
 ```bash
 # Установите API ключи
@@ -207,6 +242,7 @@ export YANDEX_SEARCH_API_KEY=ваш_api_ключ   # также использу
 export YANDEX_FOLDER_ID=ваш_folder_id       # также используется Вордстатом
 export YANDEX_WEBMASTER_TOKEN=ваш_oauth_токен
 export YANDEX_METRIKA_TOKEN=ваш_oauth_токен
+export YANDEX_DIRECT_TOKEN=ваш_oauth_токен  # по умолчанию песочница
 
 # Запустите с плагином
 claude --plugin-dir /path/to/yandex-tools-mcp
@@ -239,6 +275,8 @@ Publish packages:
 cd packages/yandex-wordstat-mcp && npm publish
 cd packages/yandex-search-mcp && npm publish
 cd packages/yandex-webmaster-mcp && npm publish
+cd packages/yandex-metrika-mcp && npm publish
+cd packages/yandex-direct-mcp && npm publish
 ```
 
 ## License

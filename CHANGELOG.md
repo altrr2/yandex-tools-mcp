@@ -4,6 +4,24 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2026-07-08
+
+### yandex-direct-mcp — 1.0.0
+
+#### Added
+- New package: MCP server for the Yandex Direct API (PPC campaign management).
+  18 tools organized by read/write risk — campaign/ad-group/ad/keyword reads, a
+  flexible `get-report` statistics engine (Reports service, TSV + polling),
+  account balance (via the Live v4 API) and geo-region reference, plus
+  WRITE-flagged mutations: create/update/manage campaigns, create ad groups/ads,
+  add keywords, set bids, and set negative keywords.
+- Defaults to the Yandex Direct **sandbox** host; `YANDEX_DIRECT_LIVE=1` switches
+  to the production account (real money). Bearer auth with optional `Client-Login`
+  for agency/managed accounts (`YANDEX_DIRECT_LOGIN`). Bids/budgets are given in
+  account currency and converted to Yandex micro-units at the boundary.
+- Wired into `.mcp.json`, `plugin.mcp.json`, `.env.example`, the root README, and
+  CLAUDE.md.
+
 ## 2026-07-05 (later)
 
 ### yandex-metrika-mcp — 1.2.1
