@@ -257,7 +257,7 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 ## Development
 
 ```bash
-git clone https://github.com/altrr2/yandex-tools-mcp.git
+git clone https://github.com/seyka-ai/yandex-tools-mcp.git
 cd yandex-tools-mcp
 bun install
 ```

@@ -29,17 +29,20 @@
     "claude",
     "ai"
   ],
-  "author": "Alternex",
+  "author": {
+    "name": "Seyka AI",
+    "url": "https://seyka.ru"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/altrr2/yandex-tools-mcp.git",
+    "url": "git+https://github.com/seyka-ai/yandex-tools-mcp.git",
     "directory": "packages/yandex-direct-mcp"
   },
   "bugs": {
-    "url": "https://github.com/altrr2/yandex-tools-mcp/issues"
+    "url": "https://github.com/seyka-ai/yandex-tools-mcp/issues"
   },
-  "homepage": "https://github.com/altrr2/yandex-tools-mcp/tree/main/packages/yandex-direct-mcp#readme",
+  "homepage": "https://github.com/seyka-ai/yandex-tools-mcp/tree/main/packages/yandex-direct-mcp#readme",
   "engines": {
     "node": ">=18.0.0"
   },

@@ -217,7 +217,7 @@ claude mcp add yandex-search \
 ## Development
 
 ```bash
-git clone https://github.com/altrr2/yandex-tools-mcp.git
+git clone https://github.com/seyka-ai/yandex-tools-mcp.git
 cd yandex-tools-mcp/packages/yandex-search-mcp
 bun install
 ```
