@@ -17,6 +17,9 @@ Monorepo containing five MCP (Model Context Protocol) servers for Yandex APIs:
 # Install dependencies (from root)
 bun install
 
+# Tests (runs the `test` script in every package that has one)
+bun run test
+
 # Code quality
 bun run lint          # Check code style with Biome
 bun run lint:fix      # Fix linting issues

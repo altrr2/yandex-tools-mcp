@@ -264,6 +264,12 @@ bun install
 
 > **Run `bun install` before starting Claude Code in this repo.** The local `.mcp.json` runs each server from source with `node`, so without installed dependencies every server crashes on startup (`Cannot find package '@modelcontextprotocol/sdk'`) and Claude Code reports it as `CONNECTION_CLOSED`. Bun installs each package's dependencies into its own `packages/*/node_modules`. The plugin setup above uses `npx` and doesn't need this step.
 
+Run all tests (each package with a `test` script):
+
+```bash
+bun run test
+```
+
 Lint and format:
 
 ```bash
