@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { listResult, writeResult } from '../format.mjs';
+import { idSchema } from '../ids.mjs';
 
 const AD_FIELDS = ['Id', 'AdGroupId', 'CampaignId', 'State', 'Status', 'Type'];
 const TEXT_AD_FIELDS = ['Title', 'Title2', 'Text', 'Href', 'DisplayUrlPath'];
@@ -71,7 +72,7 @@ export function registerAdTools(server, client) {
       description:
         'WRITE — changes an ad lifecycle state. moderate submits a draft for review; suspend/resume; archive/unarchive; delete removes it. Affects the SANDBOX account unless YANDEX_DIRECT_LIVE=1.',
       inputSchema: {
-        ad_id: z.number().describe('Ad ID'),
+        ad_id: idSchema.describe('Ad ID (pass IDs above 2^53 as a string, exactly as listed)'),
         action: z
           .enum(['moderate', 'suspend', 'resume', 'archive', 'unarchive', 'delete'])
           .describe('Lifecycle action'),
