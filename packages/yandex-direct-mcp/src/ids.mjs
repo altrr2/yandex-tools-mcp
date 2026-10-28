@@ -23,7 +23,8 @@ export function parseJson(text) {
 
 // Field names whose values are object IDs (Id, Ids, AdGroupId, CampaignIds, KeywordId, ...).
 const ID_KEY = /Ids?$/;
-const DECIMAL_ID = /^\d+$/;
+// Canonical decimal only: a leading zero ("007") would become an invalid JSON number.
+const DECIMAL_ID = /^(0|[1-9]\d*)$/;
 const MARKER = '\u0000id:';
 const MARKED = /"\\u0000id:(\d+)"/g;
 

@@ -7,7 +7,14 @@ const IMAGE_FIELDS = ['AdImageHash', 'Name', 'Type', 'Subtype', 'Associated', 'O
 const IMAGE_MIME = /^image\/(jpeg|png|gif)\b/;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
+function checkSize(bytes) {
+  if (bytes > MAX_IMAGE_BYTES) {
+    throw new Error(`Image is ${(bytes / 1048576).toFixed(1)} MB; Direct accepts at most 10 MB.`);
+  }
+}
+
 // Download an image and return it base64-encoded, rejecting anything Direct would refuse.
+// A declared Content-Length over the limit fails before the body is downloaded.
 async function fetchImageBase64(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Could not download image (${response.status}): ${url}`);
@@ -15,11 +22,22 @@ async function fetchImageBase64(url) {
   const type = response.headers.get('content-type') || '';
   if (!IMAGE_MIME.test(type)) throw new Error(`Not a JPG/PNG/GIF image (content-type "${type}"): ${url}`);
 
-  const bytes = Buffer.from(await response.arrayBuffer());
-  if (bytes.length > MAX_IMAGE_BYTES) {
-    throw new Error(`Image is ${(bytes.length / 1048576).toFixed(1)} MB; Direct accepts at most 10 MB.`);
+  const declared = Number(response.headers.get('content-length'));
+  if (declared) {
+    checkSize(declared);
   }
+
+  const bytes = Buffer.from(await response.arrayBuffer());
+  checkSize(bytes.length);
   return bytes.toString('base64');
+}
+
+// Accept raw base64 or a data URL ("data:image/png;base64,..."), which models often pass.
+function normalizeBase64(input) {
+  const data = input.replace(/^data:[^,]*;base64,/, '').replace(/\s+/g, '');
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(data)) throw new Error('image_base64 is not valid base64.');
+  checkSize(Math.floor((data.length * 3) / 4));
+  return data;
 }
 
 export function registerImageTools(server, client) {
@@ -34,7 +52,10 @@ export function registerImageTools(server, client) {
       inputSchema: {
         name: z.string().min(1).max(255).describe('Name for the image in the library'),
         image_url: z.string().url().optional().describe('Public URL to download the image from'),
-        image_base64: z.string().optional().describe('Image file contents, base64-encoded'),
+        image_base64: z
+          .string()
+          .optional()
+          .describe('Image file contents, base64-encoded (a data:image/...;base64, URL is also accepted)'),
         type: z
           .enum(['AUTO', 'REGULAR', 'WIDE', 'FIXED_IMAGE'])
           .optional()
@@ -45,7 +66,7 @@ export function registerImageTools(server, client) {
       if (Boolean(image_url) === Boolean(image_base64)) {
         throw new Error('Provide exactly one of image_url or image_base64.');
       }
-      const ImageData = image_base64 ?? (await fetchImageBase64(image_url));
+      const ImageData = image_base64 ? normalizeBase64(image_base64) : await fetchImageBase64(image_url);
       const result = await client.directRequest('adimages', 'add', {
         AdImages: [{ Name: name, ImageData, ...(type ? { Type: type } : {}) }],
       });

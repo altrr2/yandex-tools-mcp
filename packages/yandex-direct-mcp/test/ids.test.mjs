@@ -37,6 +37,12 @@ describe('toJson', () => {
     );
   });
 
+  test('never writes a leading-zero string as a bare number', () => {
+    const body = toJson({ Ids: ['007'], Id: '0' });
+    expect(body).toBe('{"Ids":["007"],"Id":0}');
+    expect(() => JSON.parse(body)).not.toThrow();
+  });
+
   test('leaves non-numeric values under ID keys alone', () => {
     expect(toJson({ AdImageHash: 'abc123', Id: 42, Ids: ['x1'] })).toBe(
       '{"AdImageHash":"abc123","Id":42,"Ids":["x1"]}',
@@ -48,6 +54,7 @@ describe('idSchema', () => {
   test('accepts numbers and decimal strings, rejects anything else', () => {
     expect(idSchema.parse(42)).toBe(42);
     expect(idSchema.parse(BIG)).toBe(BIG);
-    for (const bad of ['12a', '', -1, 1.5, '-5']) expect(idSchema.safeParse(bad).success).toBe(false);
+    expect(idSchema.parse('0')).toBe('0');
+    for (const bad of ['12a', '', -1, 1.5, '-5', '007']) expect(idSchema.safeParse(bad).success).toBe(false);
   });
 });
