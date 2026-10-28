@@ -37,7 +37,7 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 }
 ```
 
-> Prefer a hosted tool? Use the managed endpoint at <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a> — no Yandex Cloud credentials to manage.
+> Prefer a hosted tool? Use the managed endpoint at <a href="https://seyka.ru/developers" target="_blank">seyka.ru/developers</a> — no Yandex Cloud credentials to manage.
 
 **Yandex Search** (web search):
 
@@ -161,7 +161,7 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 }
 ```
 
-> Нужен готовый инструмент? Используйте размещённый эндпоинт <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a> — без необходимости управлять учётными данными Yandex Cloud.
+> Нужен готовый инструмент? Используйте размещённый эндпоинт <a href="https://seyka.ru/developers" target="_blank">seyka.ru/developers</a> — без необходимости управлять учётными данными Yandex Cloud.
 
 **Яндекс Поиск** (веб-поиск):
 
@@ -260,6 +260,14 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 git clone https://github.com/altrr2/yandex-tools-mcp.git
 cd yandex-tools-mcp
 bun install
+```
+
+> **Run `bun install` before starting Claude Code in this repo.** The local `.mcp.json` runs each server from source with `node`, so without installed dependencies every server crashes on startup (`Cannot find package '@modelcontextprotocol/sdk'`) and Claude Code reports it as `CONNECTION_CLOSED`. Bun installs each package's dependencies into its own `packages/*/node_modules`. The plugin setup above uses `npx` and doesn't need this step.
+
+Run all tests (each package with a `test` script):
+
+```bash
+bun run test
 ```
 
 Lint and format:

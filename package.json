@@ -5,11 +5,12 @@
     "packages/*"
   ],
   "scripts": {
+    "test": "bun run --filter '*' test",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write ."
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.2"
+    "@biomejs/biome": "^2.6.3"
   }
 }
