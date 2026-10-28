@@ -1,6 +1,6 @@
 {
   "name": "yandex-metrika-mcp",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "MCP server for Yandex Metrika API - web analytics, traffic data, and visitor insights",
   "type": "module",
   "main": "src/index.mjs",
@@ -28,17 +28,20 @@
     "claude",
     "ai"
   ],
-  "author": "Alternex",
+  "author": {
+    "name": "Seyka AI",
+    "url": "https://seyka.ru"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/altrr2/yandex-tools-mcp.git",
+    "url": "git+https://github.com/seyka-ai/yandex-tools-mcp.git",
     "directory": "packages/yandex-metrika-mcp"
   },
   "bugs": {
-    "url": "https://github.com/altrr2/yandex-tools-mcp/issues"
+    "url": "https://github.com/seyka-ai/yandex-tools-mcp/issues"
   },
-  "homepage": "https://github.com/altrr2/yandex-tools-mcp/tree/main/packages/yandex-metrika-mcp#readme",
+  "homepage": "https://github.com/seyka-ai/yandex-tools-mcp/tree/main/packages/yandex-metrika-mcp#readme",
   "engines": {
     "node": ">=18.0.0"
   },

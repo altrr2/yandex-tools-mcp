@@ -222,7 +222,7 @@ claude mcp add yandex-wordstat \
 ## Development
 
 ```bash
-git clone https://github.com/altrr2/yandex-tools-mcp.git
+git clone https://github.com/seyka-ai/yandex-tools-mcp.git
 cd yandex-tools-mcp/packages/yandex-wordstat-mcp
 bun install
 ```

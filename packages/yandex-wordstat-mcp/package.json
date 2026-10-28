@@ -1,6 +1,6 @@
 {
   "name": "yandex-wordstat-mcp",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "MCP server for the Yandex Wordstat v2 API (Yandex Cloud Search API) - keyword research and search trends for Russian market",
   "type": "module",
   "main": "src/index.mjs",
@@ -29,17 +29,20 @@
     "claude",
     "ai"
   ],
-  "author": "Alternex",
+  "author": {
+    "name": "Seyka AI",
+    "url": "https://seyka.ru"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/altrr2/yandex-tools-mcp.git",
+    "url": "git+https://github.com/seyka-ai/yandex-tools-mcp.git",
     "directory": "packages/yandex-wordstat-mcp"
   },
   "bugs": {
-    "url": "https://github.com/altrr2/yandex-tools-mcp/issues"
+    "url": "https://github.com/seyka-ai/yandex-tools-mcp/issues"
   },
-  "homepage": "https://github.com/altrr2/yandex-tools-mcp/tree/main/packages/yandex-wordstat-mcp#readme",
+  "homepage": "https://github.com/seyka-ai/yandex-tools-mcp/tree/main/packages/yandex-wordstat-mcp#readme",
   "engines": {
     "node": ">=18.0.0"
   },

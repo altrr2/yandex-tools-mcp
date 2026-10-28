@@ -4,9 +4,9 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 2026-10-28
 
-### yandex-direct-mcp
+### yandex-direct-mcp — 1.1.0
 
 #### Fixed
 - Ad and keyword IDs above 2^53 (e.g. 19-digit combinatorial ad IDs) were rounded by
@@ -19,6 +19,43 @@ and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - `upload-ad-image` (from a URL or base64; URL downloads are checked for JPG/PNG/GIF
   up to 10 MB) and `list-ad-images`.
 - `create-text-ad` takes an optional `image_hash` to attach an uploaded image.
+
+#### Changed
+- `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
+- Repository moved to [seyka-ai/yandex-tools-mcp](https://github.com/seyka-ai/yandex-tools-mcp).
+- The server reports its real version (from `package.json`) to MCP clients instead of a hardcoded one.
+
+### yandex-search-mcp — 1.3.2
+
+#### Changed
+- Hosted-API link now points to [seyka.ru/developers](https://seyka.ru/developers);
+  unoapi.ru is being sunset.
+- `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
+- Repository moved to [seyka-ai/yandex-tools-mcp](https://github.com/seyka-ai/yandex-tools-mcp).
+- The server reports its real version (from `package.json`) to MCP clients instead of a hardcoded one.
+
+### yandex-wordstat-mcp — 2.0.2
+
+#### Changed
+- Hosted-API link now points to [seyka.ru/developers](https://seyka.ru/developers);
+  unoapi.ru is being sunset.
+- `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
+- Repository moved to [seyka-ai/yandex-tools-mcp](https://github.com/seyka-ai/yandex-tools-mcp).
+- The server reports its real version (from `package.json`) to MCP clients instead of a hardcoded one.
+
+### yandex-webmaster-mcp — 1.2.2
+
+#### Changed
+- `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
+- Repository moved to [seyka-ai/yandex-tools-mcp](https://github.com/seyka-ai/yandex-tools-mcp).
+- The server reports its real version (from `package.json`) to MCP clients instead of a hardcoded one.
+
+### yandex-metrika-mcp — 1.2.2
+
+#### Changed
+- `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
+- Repository moved to [seyka-ai/yandex-tools-mcp](https://github.com/seyka-ai/yandex-tools-mcp).
+- The server reports its real version (from `package.json`) to MCP clients instead of a hardcoded one.
 
 ## 2026-07-08
 
