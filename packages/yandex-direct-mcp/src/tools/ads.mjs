@@ -41,22 +41,27 @@ export function registerAdTools(server, client) {
     {
       title: 'Create Text Ad',
       description:
-        'WRITE — creates a text ad in an ad group. Affects the SANDBOX account unless YANDEX_DIRECT_LIVE=1. New ads enter moderation.',
+        'WRITE — creates a text ad in an ad group, optionally with an image (image_hash from upload-ad-image). Affects the SANDBOX account unless YANDEX_DIRECT_LIVE=1. New ads enter moderation.',
       inputSchema: {
         adgroup_id: z.number().describe('Ad group ID to add the ad to'),
         title: z.string().describe('Ad title (max 56 chars)'),
         text: z.string().describe('Ad body text (max 81 chars)'),
         href: z.string().optional().describe('Landing page URL'),
         title2: z.string().optional().describe('Second title (max 30 chars)'),
+        image_hash: z
+          .string()
+          .optional()
+          .describe('AdImageHash of a REGULAR or WIDE image to show with the ad (see upload-ad-image)'),
       },
     },
-    async ({ adgroup_id, title, text, href, title2 }) => {
+    async ({ adgroup_id, title, text, href, title2, image_hash }) => {
       const textAd = {
         Title: title,
         Text: text,
         Mobile: 'NO',
         ...(href ? { Href: href } : {}),
         ...(title2 ? { Title2: title2 } : {}),
+        ...(image_hash ? { AdImageHash: image_hash } : {}),
       };
       const result = await client.directRequest('ads', 'add', {
         Ads: [{ AdGroupId: adgroup_id, TextAd: textAd }],

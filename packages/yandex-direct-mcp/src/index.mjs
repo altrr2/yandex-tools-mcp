@@ -7,6 +7,7 @@ import { registerAccountTools } from './tools/account.mjs';
 import { registerAdGroupTools } from './tools/adgroups.mjs';
 import { registerAdTools } from './tools/ads.mjs';
 import { registerCampaignTools } from './tools/campaigns.mjs';
+import { registerImageTools } from './tools/images.mjs';
 import { registerKeywordTools } from './tools/keywords.mjs';
 import { registerReportTools } from './tools/reports.mjs';
 
@@ -27,6 +28,7 @@ async function runServer() {
   registerCampaignTools(server, client);
   registerAdGroupTools(server, client);
   registerAdTools(server, client);
+  registerImageTools(server, client);
   registerKeywordTools(server, client);
   registerReportTools(server, client);
   registerAccountTools(server, client);
