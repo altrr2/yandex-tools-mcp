@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'node:module';
 import { domainToUnicode } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+
+// Reported to MCP clients; read from package.json so it can't drift from releases.
+const { version } = createRequire(import.meta.url)('../package.json');
 
 const BASE_URL = 'https://searchapi.api.cloud.yandex.net/v2/web/search';
 
@@ -242,7 +246,7 @@ async function search(query, options = {}) {
 
 const server = new McpServer({
   name: 'yandex-search',
-  version: '1.0.0',
+  version,
 });
 
 server.registerTool(

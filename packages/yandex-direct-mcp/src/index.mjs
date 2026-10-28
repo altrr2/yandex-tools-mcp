@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'node:module';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createClient } from './client.mjs';
@@ -9,6 +10,9 @@ import { registerAdTools } from './tools/ads.mjs';
 import { registerCampaignTools } from './tools/campaigns.mjs';
 import { registerKeywordTools } from './tools/keywords.mjs';
 import { registerReportTools } from './tools/reports.mjs';
+
+// Reported to MCP clients; read from package.json so it can't drift from releases.
+const { version } = createRequire(import.meta.url)('../package.json');
 
 // Handle CLI commands
 const command = process.argv[2];
@@ -22,7 +26,7 @@ if (command === 'auth') {
 async function runServer() {
   const client = createClient();
 
-  const server = new McpServer({ name: 'yandex-direct', version: '1.0.0' });
+  const server = new McpServer({ name: 'yandex-direct', version });
 
   registerCampaignTools(server, client);
   registerAdGroupTools(server, client);

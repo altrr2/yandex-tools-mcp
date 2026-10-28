@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'node:module';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+
+// Reported to MCP clients; read from package.json so it can't drift from releases.
+const { version } = createRequire(import.meta.url)('../package.json');
 
 // Handle CLI commands
 const command = process.argv[2];
@@ -121,7 +125,7 @@ async function runServer() {
       : { metrics: 'ym:s:anyGoalReaches,ym:s:anyGoalConversionRate', labels: ['goal reaches (any)', 'conv %'] };
   const goalIdSchema = { goal_id: z.number().optional().describe('Goal ID (from get-goals); defaults to all goals') };
 
-  const server = new McpServer({ name: 'yandex-metrika', version: '1.0.0' });
+  const server = new McpServer({ name: 'yandex-metrika', version });
 
   // ============ Management Tools ============
 
