@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'node:module';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
@@ -17,6 +18,9 @@ import {
   toYandexPeriod,
   toYandexRegionGranularity,
 } from './convert.mjs';
+
+// Reported to MCP clients; read from package.json so it can't drift from releases.
+const { version } = createRequire(import.meta.url)('../package.json');
 
 await runServer();
 
@@ -161,7 +165,7 @@ async function runServer() {
 
   const server = new McpServer({
     name: 'yandex-wordstat',
-    version: '2.0.1',
+    version,
   });
 
   // Tool 1: Get Regions Tree
