@@ -42,6 +42,11 @@ and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 #### Changed
 - `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
 
+### yandex-metrika-mcp — 1.2.2
+
+#### Changed
+- `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
+
 ## 2026-07-08
 
 ### yandex-direct-mcp — 1.0.0
