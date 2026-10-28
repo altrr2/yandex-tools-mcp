@@ -240,4 +240,4 @@ YANDEX_SEARCH_API_KEY=key YANDEX_FOLDER_ID=folder node src/index.mjs
 
 ## License
 
-MIT © Alternex
+MIT © Seyka AI

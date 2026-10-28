@@ -28,8 +28,7 @@ and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### yandex-search-mcp — 1.3.2
 
 #### Changed
-- Hosted-API link now points to [seyka.ru/developers](https://seyka.ru/developers);
-  unoapi.ru is being sunset.
+- Hosted-API link now points to [seyka.ru/developers](https://seyka.ru/developers).
 - `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
 - Repository moved to [seyka-ai/yandex-tools-mcp](https://github.com/seyka-ai/yandex-tools-mcp).
 - The server reports its real version (from `package.json`) to MCP clients instead of a hardcoded one.
@@ -37,8 +36,7 @@ and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### yandex-wordstat-mcp — 2.0.2
 
 #### Changed
-- Hosted-API link now points to [seyka.ru/developers](https://seyka.ru/developers);
-  unoapi.ru is being sunset.
+- Hosted-API link now points to [seyka.ru/developers](https://seyka.ru/developers).
 - `@modelcontextprotocol/sdk` ^1.29.0 → ^1.32.2 and `zod` ^4.4.3 → ^4.6.7.
 - Repository moved to [seyka-ai/yandex-tools-mcp](https://github.com/seyka-ai/yandex-tools-mcp).
 - The server reports its real version (from `package.json`) to MCP clients instead of a hardcoded one.
@@ -127,8 +125,7 @@ and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   `domainToUnicode` (non-IDN hosts and decode failures pass through unchanged).
 
 #### Changed
-- README: replaced the `redirekto.ru/seo` link with the hosted version
-  (`unoapi.ru/services/yandex-search`) and an online example (`seyka.ru`).
+- README: added links to the hosted version and an online example (`seyka.ru`).
 
 ## 2026-07-02
 

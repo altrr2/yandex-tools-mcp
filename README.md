@@ -289,4 +289,4 @@ cd packages/yandex-direct-mcp && npm publish
 
 ## License
 
-MIT © Alternex
+MIT © Seyka AI
