@@ -39,7 +39,7 @@ MCP server for the **Yandex Wordstat v2 API** — keyword research and search tr
 ### Setup
 
 > **Prefer a hosted tool?** If you'd rather not manage Yandex Cloud credentials yourself,
-> a hosted MCP endpoint is available at <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a>.
+> a hosted MCP endpoint is available at <a href="https://seyka.ru/developers" target="_blank">seyka.ru/developers</a>.
 
 #### Step 1: Get a Yandex Cloud API key
 
@@ -141,7 +141,7 @@ MCP-сервер для **Yandex Wordstat v2 API** — исследование 
 ### Настройка
 
 > **Нужен готовый инструмент?** Если вы не хотите самостоятельно управлять учётными данными
-> Yandex Cloud, доступен размещённый MCP-эндпоинт: <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a>.
+> Yandex Cloud, доступен размещённый MCP-эндпоинт: <a href="https://seyka.ru/developers" target="_blank">seyka.ru/developers</a>.
 
 #### Шаг 1: Получение API-ключа Yandex Cloud
 

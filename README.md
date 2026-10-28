@@ -37,7 +37,7 @@ MCP servers for Yandex APIs — search, keyword research, webmaster tools, and w
 }
 ```
 
-> Prefer a hosted tool? Use the managed endpoint at <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a> — no Yandex Cloud credentials to manage.
+> Prefer a hosted tool? Use the managed endpoint at <a href="https://seyka.ru/developers" target="_blank">seyka.ru/developers</a> — no Yandex Cloud credentials to manage.
 
 **Yandex Search** (web search):
 
@@ -161,7 +161,7 @@ claude --plugin-dir /path/to/yandex-tools-mcp
 }
 ```
 
-> Нужен готовый инструмент? Используйте размещённый эндпоинт <a href="https://unoapi.ru/services/wordstat" target="_blank">unoapi.ru/services/wordstat</a> — без необходимости управлять учётными данными Yandex Cloud.
+> Нужен готовый инструмент? Используйте размещённый эндпоинт <a href="https://seyka.ru/developers" target="_blank">seyka.ru/developers</a> — без необходимости управлять учётными данными Yandex Cloud.
 
 **Яндекс Поиск** (веб-поиск):
 
