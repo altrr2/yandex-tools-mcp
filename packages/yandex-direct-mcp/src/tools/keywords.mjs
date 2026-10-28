@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { listResult, writeResult } from '../format.mjs';
+import { idSchema } from '../ids.mjs';
 import { fromMicro, toMicro } from '../money.mjs';
 
 const KEYWORD_FIELDS = ['Id', 'Keyword', 'AdGroupId', 'CampaignId', 'State', 'Status', 'Bid', 'ContextBid'];
@@ -68,7 +69,10 @@ export function registerKeywordTools(server, client) {
       description:
         'WRITE — sets search and/or network bids on keywords. Bids are given in account currency (e.g. rubles) and converted to micro-units. Affects the SANDBOX account unless YANDEX_DIRECT_LIVE=1 — check balance before raising bids on a live account.',
       inputSchema: {
-        keyword_ids: z.array(z.number()).min(1).describe('Keyword IDs to set bids for'),
+        keyword_ids: z
+          .array(idSchema)
+          .min(1)
+          .describe('Keyword IDs to set bids for (pass IDs above 2^53 as strings, exactly as listed)'),
         bid: z.number().optional().describe('Search bid in account currency (converted to micro-units)'),
         context_bid: z
           .number()

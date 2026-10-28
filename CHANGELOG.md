@@ -4,6 +4,22 @@ All notable changes to the packages in this monorepo are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and each package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### yandex-direct-mcp
+
+#### Fixed
+- Ad and keyword IDs above 2^53 (e.g. 19-digit combinatorial ad IDs) were rounded by
+  `JSON.parse`, so an ID from `list-ads`/`create-text-ad` no longer matched anything
+  and `manage-ad`/`set-bids` failed with "Object not found". Responses now keep such
+  IDs exact (returned as strings), and `manage-ad`/`set-bids` accept IDs as numbers or
+  decimal strings; IDs are always sent to Direct as numbers.
+
+#### Added
+- `upload-ad-image` (from a URL or base64; URL downloads are checked for JPG/PNG/GIF
+  up to 10 MB) and `list-ad-images`.
+- `create-text-ad` takes an optional `image_hash` to attach an uploaded image.
+
 ## 2026-07-08
 
 ### yandex-direct-mcp — 1.0.0

@@ -17,7 +17,8 @@ MCP server for [Yandex Direct API](https://yandex.com/dev/direct/) — PPC campa
 
 - **Campaigns** — list, inspect, create, update, and manage lifecycle (suspend/resume/archive/delete)
 - **Ad groups** — list, create, delete, with region targeting
-- **Ads** — list and create text ads, manage moderation/lifecycle
+- **Ads** — list and create text ads (optionally with an image), manage moderation/lifecycle
+- **Images** — upload ad images (from a URL or base64) and list the account image library
 - **Keywords & bids** — list with current bids, add keywords, set search/network bids (in account currency), set negative keywords
 - **Statistics** — one flexible `get-report` covering any report type, fields, and date range
 - **Account** — balance and geo-region reference
@@ -88,8 +89,10 @@ To operate on a real account, add `-e YANDEX_DIRECT_LIVE=1`. For agency/managed 
 | `create-adgroup` | write | Create an ad group with region targeting |
 | `delete-adgroup` | write | Delete an ad group |
 | `list-ads` | read | List ads with text and moderation status |
-| `create-text-ad` | write | Create a text ad in an ad group |
+| `create-text-ad` | write | Create a text ad in an ad group, optionally with an image |
 | `manage-ad` | write | Moderate/suspend/resume/archive/unarchive/delete an ad |
+| `upload-ad-image` | write | Upload an image (URL or base64) and get its `AdImageHash` |
+| `list-ad-images` | read | List images in the account image library |
 | `list-keywords` | read | List keywords with current search/network bids |
 | `add-keywords` | write | Add keywords to an ad group |
 | `set-bids` | write | Set search/network bids on keywords (in account currency) |
@@ -99,6 +102,8 @@ To operate on a real account, add `-e YANDEX_DIRECT_LIVE=1`. For agency/managed 
 | `get-regions` | read | Geo-region IDs for targeting |
 
 Bids and budgets are given in account currency (e.g. rubles) and converted to Yandex's micro-units automatically.
+
+Some ad and keyword IDs are larger than JavaScript numbers can hold exactly (above 2^53). The server keeps them exact and returns them as strings; pass them back as strings, exactly as listed.
 
 ### Usage Examples
 
@@ -120,7 +125,8 @@ Once configured, ask Claude:
 
 - **Кампании** — список, детали, создание, обновление, управление статусом (пауза/возобновление/архив/удаление)
 - **Группы объявлений** — список, создание, удаление, с таргетингом по регионам
-- **Объявления** — список и создание текстовых объявлений, управление модерацией/статусом
+- **Объявления** — список и создание текстовых объявлений (в том числе с изображением), управление модерацией/статусом
+- **Изображения** — загрузка изображений для объявлений (по URL или в base64) и список библиотеки изображений
 - **Ключевые фразы и ставки** — список с текущими ставками, добавление фраз, установка ставок на поиске/в сетях (в валюте аккаунта), минус-фразы
 - **Статистика** — один гибкий `get-report` с любым типом отчёта, полями и диапазоном дат
 - **Аккаунт** — баланс и справочник регионов
@@ -191,8 +197,10 @@ claude mcp add yandex-direct \
 | `create-adgroup` | запись | Создать группу объявлений с таргетингом по регионам |
 | `delete-adgroup` | запись | Удалить группу объявлений |
 | `list-ads` | чтение | Список объявлений с текстом и статусом модерации |
-| `create-text-ad` | запись | Создать текстовое объявление в группе |
+| `create-text-ad` | запись | Создать текстовое объявление в группе, при необходимости с изображением |
 | `manage-ad` | запись | Модерация/пауза/возобновление/архив/удаление объявления |
+| `upload-ad-image` | запись | Загрузить изображение (URL или base64) и получить его `AdImageHash` |
+| `list-ad-images` | чтение | Список изображений в библиотеке аккаунта |
 | `list-keywords` | чтение | Список ключевых фраз с текущими ставками |
 | `add-keywords` | запись | Добавить ключевые фразы в группу |
 | `set-bids` | запись | Установить ставки на поиске/в сетях (в валюте аккаунта) |
@@ -202,6 +210,8 @@ claude mcp add yandex-direct \
 | `get-regions` | чтение | ID регионов для таргетинга |
 
 Ставки и бюджеты указываются в валюте аккаунта (например, в рублях) и автоматически конвертируются в микро-единицы Яндекса.
+
+Некоторые ID объявлений и ключевых фраз больше, чем JavaScript может точно хранить в числе (больше 2^53). Сервер сохраняет их точно и возвращает строками; передавайте их обратно строками, ровно как в списке.
 
 ### Примеры использования
 

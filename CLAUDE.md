@@ -66,14 +66,17 @@ packages/
 │   └── src/
 │       ├── index.mjs                   # MCP server (44 tools)
 │       └── auth.mjs                    # OAuth token exchange flow
-└── yandex-direct-mcp/                  # Multi-file (unlike siblings): ~18 tools split by resource
-    └── src/
-        ├── index.mjs                   # Thin entry: CLI dispatch, build client, register tool groups
-        ├── auth.mjs                    # OAuth token exchange flow
-        ├── client.mjs                  # v5 directRequest + Reports reportRequest + Live4 liveV4Request
-        ├── money.mjs                   # toMicro/fromMicro (micro-unit conversion)
-        ├── format.mjs                  # summarizeResults (mutation result formatter), today()
-        └── tools/                      # campaigns, adgroups, ads, keywords, reports, account
+└── yandex-direct-mcp/                  # Multi-file (unlike siblings): ~20 tools split by resource
+    ├── src/
+    │   ├── index.mjs                   # Thin entry: CLI dispatch, build client, register tool groups
+    │   ├── auth.mjs                    # OAuth token exchange flow
+    │   ├── client.mjs                  # v5 directRequest + Reports reportRequest + Live4 liveV4Request
+    │   ├── money.mjs                   # toMicro/fromMicro (micro-unit conversion)
+    │   ├── format.mjs                  # summarizeResults (mutation result formatter), today()
+    │   ├── ids.mjs                     # Exact int64 IDs: parseJson/toJson/idSchema
+    │   └── tools/                      # campaigns, adgroups, ads, images, keywords, reports, account
+    └── test/
+        └── ids.test.mjs                # bun test for ids.mjs
 ```
 
 ### MCP Protocol Pattern
@@ -140,6 +143,12 @@ All servers follow the same pattern:
   inspects the body and throws
 - **Money is micro-units** (currency × 1,000,000) — `money.mjs` `toMicro`/`fromMicro`; tools
   accept plain currency amounts (rubles) and convert at the boundary
+- **IDs can exceed 2^53** (combinatorial ad IDs, keyword IDs) — all client bodies go through
+  `ids.mjs`: `parseJson` turns unsafe integers into decimal strings, `toJson` writes decimal
+  strings under `*Id`/`*Ids` keys back as bare numbers; ad/keyword ID inputs use `idSchema`
+  (number or decimal string). Safe integers stay numbers
+- **Images**: `upload-ad-image` (AdImages.add, URL or base64; URL downloads are checked for
+  JPG/PNG/GIF ≤ 10 MB) returns an `AdImageHash` that `create-text-ad` takes as `image_hash`
 - **`get-report`** is a flexible statistics engine (like metrika's) on the separate Reports
   service (`reportRequest`): returns **TSV**, may reply `201/202` → polls `retryIn` seconds;
   requests money in real currency (`returnMoneyInMicros:false`) so no conversion on output
